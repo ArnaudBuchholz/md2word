@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/ArnaudBuchholz/md2word#readme",
   "dependencies": {
+    "colors": "^1.4.0",
     "marked": "^2.0.1"
   },
   "devDependencies": {
@@ -36,8 +37,7 @@
       "mocha",
       "node"
     ],
-    "globals": [
-    ]
+    "globals": []
   },
   "mocha": {
     "diff": false,
