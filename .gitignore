@@ -23,3 +23,7 @@ coverage
 
 # tests
 tests/cache/
+
+# word
+*.doc
+~*.tmp
