@@ -1,0 +1,27 @@
+{
+  "name": "md2word",
+  "version": "0.0.1",
+  "description": "Markdown to Word automation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArnaudBuchholz/md2word.git"
+  },
+  "keywords": [
+    "markdown",
+    "word",
+    "automation"
+  ],
+  "author": "Arnaud Buchholz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ArnaudBuchholz/md2word/issues"
+  },
+  "homepage": "https://github.com/ArnaudBuchholz/md2word#readme",
+  "dependencies": {
+    "marked": "^2.0.1"
+  }
+}
