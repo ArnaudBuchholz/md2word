@@ -1,0 +1,10 @@
+{
+  "port": 8080,
+  "mappings": [{
+    "match": "^/mocha/.*",
+    "status": 403
+  }, {
+    "match": "^/(.*)",
+    "file": "./$1"
+  }]
+}
