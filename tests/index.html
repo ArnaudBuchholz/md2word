@@ -36,7 +36,10 @@ left 11
     <script>
 document.querySelector('button').addEventListener('click', () => {
   const html = module.exports(document.getElementById('rendered').value)
-  document.getElementById('result').innerHTML = html.replace('<cursor/>', '<span class="cursor">|</span>')
+  document.getElementById('result').innerHTML = html
+    .replace('<cursor/>', '<span class="cursor">|</span>')
+    .replace(/<selected>/g, '<span class="selected">')
+    .replace(/<\/selected>/g, '</span>')
 })
     </script>
   </html>
