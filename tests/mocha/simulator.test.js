@@ -12,5 +12,15 @@ describe('simulator', () => {
 
   test('text Hello World', 'Hello World<cursor/>')
 
+  test(`text Hello World
+left 11`, '<cursor/>Hello World')
+
+  test(`text Hello World
+left 5`, 'Hello <cursor/>World')
+
+  test(`text Hello World
+left 5
+select 5`, 'Hello <selected>World</selected><cursor/>')
+
 })
 
