@@ -28,7 +28,6 @@ const module = {}
           <textarea id="rendered" cols="80" rows="40">
 text Hello World
 left 11
-select 5
 </textarea><br />
           <button>run</button>
         </td>
@@ -37,7 +36,7 @@ select 5
     <script>
 document.querySelector('button').addEventListener('click', () => {
   const html = module.exports(document.getElementById('rendered').value)
-  document.getElementById('result').innerHTML = html
+  document.getElementById('result').innerHTML = html.replace('<cursor/>', '<span class="cursor">|</span>')
 })
     </script>
   </html>
