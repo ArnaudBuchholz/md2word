@@ -37,18 +37,19 @@ function format (tagName) {
         throw new Error('not able to format consecutive blocks')
       }
       const newBlocks = []
-      const 
-      if (selectFrom > current) {
-        newBlocks.push(block.substring(0, selectFrom - current))
+      const relSelectFrom = this.selectFrom - walkPos
+      const relPos = this.pos - walkPos
+      if (relSelectFrom > 0) {
+        newBlocks.push(block.substring(0, relSelectFrom))
       }
-      const text = 
-
-
-      if (pos < end) {
-        newBlocks.push(block.substring(), selectFrom - current)
+      const text = block.substring(relSelectFrom, relPos - relSelectFrom)
+      newBlocks.push({
+        [tagName]: text
+      })
+      if (relPos < block.length) {
+        newBlocks.push(block.substring(relPos))
       }
-
-
+      blockContainer.splice(blockContainerIndex, 1, ...newBlocks)
     }
   })
 }
@@ -87,12 +88,12 @@ function html () {
       result.push(`</${text}>`)
     } else {
       // text
-      const end = walkPos + block.length
+      const end = walkPos + text.length
       if (this.pos >= walkPos && this.pos < end) {
         const relPos = this.pos - walkPos
-        result.push(block.substring(0, relPos), '<cursor/>', block.substring(relPos))
+        result.push(text.substring(0, relPos), '<cursor/>', text.substring(relPos))
       } else {
-        result.push(block)
+        result.push(text)
       }
     }
   })
