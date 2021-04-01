@@ -1,5 +1,14 @@
 'use strict'
 
+/*
+
+**Hello *World***
+
+{ b: ["Hello ", { i: [ "World" ] }]
+
+*/
+
+/*
 function format (tagName) {
   const from = 0
   this.texts.every(text => {
@@ -13,12 +22,17 @@ function format (tagName) {
 
   })
 }
+*/
 
 const actions = {
   text: function (text) {
-    delete selectFrom
-    this.texts.push(text)
+    if (this.pos !== this.length) {
+      throw new Error('text allowed only at the end of the flow')
+    }
+    delete this.selectFrom
+    this.blocks.push(text)
     this.pos += text.length
+    this.length += text.length
   },
 
   left: function (count) {
@@ -33,23 +47,47 @@ const actions = {
 }
 
 function html () {
-  if (this.selectFrom !== undefined) {
-    format.call(this, 'selected')
+  // if (this.selectFrom !== undefined) {
+  //   format.call(this, 'selected')
+  // }
+  const result = []
+  const pos = this.pos
+  let current = 0
+
+  function walk (block) {
+    if (Array.isArray(block)) {
+      block.forEach(walk)
+    } else if (typeof block === 'object') {
+      const format = Object.keys(block)[0]
+      result.push(`<${format}>`)
+      walk(block[format])
+      result.push(`</${format}>`)
+    } else {
+      // text
+      const end = current + block.length
+      if (pos >= current && pos < end) {
+        const relPos = pos - current
+        result.push(block.substring(0, relPos), '<cursor/>', block.substring(relPos))
+      } else {
+        result.push(block)
+      }
+      current = end
+    }
   }
-  const text = this.texts[0]
-  if (this.pos < text.length) {
-    return text.substring(0, this.pos)
-      + '<cursor/>'
-      + text.substring(this.pos)
+
+  walk(this.blocks)
+  if (this.pos === this.length) {
+    result.push('<cursor/>')
   }
-  return text + '<cursor/>'
+
+  return result.join('')
 }
 
 module.exports = commands => {
   const context = {
-    formats : [],
-    texts: [],
-    pos: 0
+    blocks: [],
+    pos: 0,
+    length: 0
   }
   commands
     .split(/\r?\n/)
