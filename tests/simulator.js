@@ -17,9 +17,9 @@ function walk (blocks, callback) {
       block.forEach(process)
     } else if (typeof block === 'object') {
       const format = Object.keys(block)[0]
-      callback('format-begin', format)
+      callback('format-begin', format, {})
       process(block[format])
-      callback('format-end', format)
+      callback('format-end', format, {})
     } else {
       callback('text', block, { walkPos, blockContainer, blockContainerIndex })
       walkPos += block.length
@@ -31,23 +31,23 @@ function walk (blocks, callback) {
 
 function format (tagName) {
   walk(this.blocks, (action, text, { walkPos, blockContainer, blockContainerIndex }) => {
+    debugger
     const end = walkPos + text.length
     if (action === 'text' && this.selectFrom >= walkPos && this.selectFrom < end) {
-      if (this.pos >= end) {
+      if (this.pos > end) {
         throw new Error('not able to format consecutive blocks')
       }
       const newBlocks = []
       const relSelectFrom = this.selectFrom - walkPos
       const relPos = this.pos - walkPos
       if (relSelectFrom > 0) {
-        newBlocks.push(block.substring(0, relSelectFrom))
+        newBlocks.push(text.substring(0, relSelectFrom))
       }
-      const text = block.substring(relSelectFrom, relPos - relSelectFrom)
       newBlocks.push({
-        [tagName]: text
+        [tagName]: text.substring(relSelectFrom, relPos)
       })
-      if (relPos < block.length) {
-        newBlocks.push(block.substring(relPos))
+      if (relPos < text.length) {
+        newBlocks.push(text.substring(relPos))
       }
       blockContainer.splice(blockContainerIndex, 1, ...newBlocks)
     }
