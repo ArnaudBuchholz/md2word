@@ -28,6 +28,8 @@ The styles are distinguished by font and paragraph styles. A font style is only 
 ```
 > Examples of word formatting
 
+It is possible to combine them : **Hello *World***
+
 ### Paragraph Styles
 No good, entertaining publication will only consist of standard paragraphs like this one. To present your content and to make your E-Bite look more interesting, you want to use lists, tables, boxes, code listings, and more.
 
