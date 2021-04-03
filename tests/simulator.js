@@ -82,6 +82,14 @@ const actions = {
     this.pos = Math.min(this.length, this.pos + int(count))
   },
 
+  enter () {
+    if (this.pos !== this.length) {
+      throw new Error('enter allowed only at the end of the flow')
+    }
+    delete this.selectFrom
+    this.blocks.push({ br: [] })
+  },
+
   format,
 
   debug () { debugger }
@@ -92,11 +100,17 @@ function html () {
     format.call(this, 'selected')
   }
   const result = []
+  let lastFormat
   walk(this.blocks, (action, text, { walkPos }) => {
     if (action === 'format-begin') {
-      result.push(`<${text}>`)
+      if (text !== 'br' || lastFormat !== 'h1') {
+        result.push(`<${text}>`)
+      }
     } else if (action === 'format-end') {
-      result.push(`</${text}>`)
+      if (text !== 'br') {
+        lastFormat = text
+        result.push(`</${text}>`)
+      }
     } else {
       // text
       const end = walkPos + text.length
@@ -122,7 +136,7 @@ module.exports = commands => {
   }
   commands
     .split(/\r?\n/)
-    .filter(command => command)
+    .filter(command => !!command.trim())
     .forEach(command => {
       const [, action, parameter] = /(\w+) ?(.*)/.exec(command)
       actions[action].call(context, parameter)
