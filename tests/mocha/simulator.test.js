@@ -30,4 +30,25 @@ left 5`, 'Hello <cursor/>World')
   test(`text Hello World
 left 5
 select 5`, 'Hello <selected>World</selected><cursor/>')
+
+  test(`text Hello World
+left 5
+select 5
+format b`, 'Hello <b><selected>World</selected></b><cursor/>')
+
+  test(`text Hello World
+left 5
+select 5
+format b
+right 1`, 'Hello <b>World</b><cursor/>')
+
+  test(`text Hello World
+left 11
+select 11
+format b
+left 5
+select 5
+format i
+right 1`, '<b>Hello <i>World</i></b><cursor/>')
+
 })
