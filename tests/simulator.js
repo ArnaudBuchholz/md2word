@@ -7,21 +7,22 @@
 
 function walk (blocks, callback) {
   let walkPos = 0
-  let blockContainer
+  const blockContainers = []
   let blockContainerIndex
 
   function process (block, parentIndex) {
     blockContainerIndex = parentIndex
     if (Array.isArray(block)) {
-      blockContainer = block
+      blockContainers.unshift(block)
       block.forEach(process)
     } else if (typeof block === 'object') {
       const format = Object.keys(block)[0]
       callback('format-begin', format, {})
       process(block[format])
+      blockContainers.shift()
       callback('format-end', format, {})
     } else {
-      callback('text', block, { walkPos, blockContainer, blockContainerIndex })
+      callback('text', block, { walkPos, blockContainer: blockContainers[0], blockContainerIndex })
       walkPos += block.length
     }
   }
@@ -29,9 +30,10 @@ function walk (blocks, callback) {
   process(blocks)
 }
 
+const int = value => parseInt(value, 10)
+
 function format (tagName) {
   walk(this.blocks, (action, text, { walkPos, blockContainer, blockContainerIndex }) => {
-    debugger
     const end = walkPos + text.length
     if (action === 'text' && this.selectFrom >= walkPos && this.selectFrom < end) {
       if (this.pos > end) {
@@ -44,7 +46,7 @@ function format (tagName) {
         newBlocks.push(text.substring(0, relSelectFrom))
       }
       newBlocks.push({
-        [tagName]: text.substring(relSelectFrom, relPos)
+        [tagName]: [text.substring(relSelectFrom, relPos)]
       })
       if (relPos < text.length) {
         newBlocks.push(text.substring(relPos))
@@ -55,7 +57,7 @@ function format (tagName) {
 }
 
 const actions = {
-  text: function (text) {
+  text (text) {
     if (this.pos !== this.length) {
       throw new Error('text allowed only at the end of the flow')
     }
@@ -65,15 +67,24 @@ const actions = {
     this.length += text.length
   },
 
-  left: function (count) {
+  left (count) {
     delete this.selectFrom
-    this.pos -= parseInt(count, 10)
+    this.pos -= int(count)
   },
 
-  select: function (count) {
+  select (count) {
     this.selectFrom = this.pos
-    this.pos += parseInt(count, 10)
-  }
+    this.pos += int(count)
+  },
+
+  right (count) {
+    delete this.selectFrom
+    this.pos = Math.min(this.length, this.pos + int(count))
+  },
+
+  format,
+
+  debug () { debugger }
 }
 
 function html () {
