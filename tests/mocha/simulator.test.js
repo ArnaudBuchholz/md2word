@@ -3,10 +3,16 @@
 const assert = require('assert')
 const simulator = require('../simulator')
 
-const test = (source, expected) => it(source.replace(/\n/g, ','), () => {
+const test = (source, expected) => {
+  let label = source.replace(/\n/g, ',')
+  if (label.length > 70) {
+    label = label.substring(0, 67) + "..."
+  }
+  it(label, () => {
   const html = simulator(source)
   assert.strictEqual(html, expected)
 })
+}
 
 describe('simulator', () => {
 
@@ -50,5 +56,37 @@ left 5
 select 5
 format i
 right 1`, '<b>Hello <i>World</i></b><cursor/>')
+
+  test(`text Chapter 1
+left 9
+select 9
+format h1
+enter
+text Hello World
+left 5
+select 5
+format b
+left 3
+select 2
+format i
+select 1
+format u
+right 1`, '<h1>Chapter 1</h1>Hello <b>Wo<i>rl</i><u>d</u></b><cursor/>')
+
+  test(`text Chapter 1
+left 9
+select 9
+format h1
+enter
+text Hello World
+left 5
+select 5
+format b
+left 3
+select 2
+format i
+select 1
+format u
+enter`, '<h1>Chapter 1</h1>Hello <b>Wo<i>rl</i><u>d</u></b><br><cursor/>')
 
 })
