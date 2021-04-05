@@ -6,16 +6,15 @@ const simulator = require('../simulator')
 const test = (source, expected) => {
   let label = source.replace(/\n/g, ',')
   if (label.length > 70) {
-    label = label.substring(0, 67) + "..."
+    label = label.substring(0, 67) + '...'
   }
   it(label, () => {
-  const html = simulator(source)
-  assert.strictEqual(html, expected)
-})
+    const html = simulator(source)
+    assert.strictEqual(html, expected)
+  })
 }
 
 describe('simulator', () => {
-
   test('text Hello World', 'Hello World<cursor/>')
 
   test(`text Hello World
@@ -88,5 +87,4 @@ format i
 select 1
 format u
 enter`, '<h1>Chapter 1</h1>Hello <b>Wo<i>rl</i><u>d</u></b><br><cursor/>')
-
 })
