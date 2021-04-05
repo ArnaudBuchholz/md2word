@@ -3,7 +3,7 @@
 const nop = () => {}
 
 const isTextOnly = ({ tokens }) => tokens.length === 1 && tokens[0].type === 'text'
-const isTextOnlyBlockquote = ({ tokens }) => tokens.length === 1 && tokens[0].type === 'paragraph' && isTextOnly(tokens[0])
+const isTextOnlyBlockquote = ({ tokens }) => tokens.length === 1 && tokens[0].type === 'paragraph' && isTextOnly(tokens[0])
 
 const linters = {
 
