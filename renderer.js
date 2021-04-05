@@ -41,4 +41,4 @@ function render (tokens) {
   tokens.forEach((token, index) => (renderers[token.type] || nop).call(this, token, index, tokens))
 }
 
-module.exports = (tokens, output) => render.call({ output }, tokens)
+module.exports = (tokens, output) => render.call({ output }, tokens)
