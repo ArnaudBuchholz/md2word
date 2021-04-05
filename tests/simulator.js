@@ -5,7 +5,7 @@
 { b: ["Hello ", { i: [ "World" ] }]
 */
 
-function walk (blocks, callback) {
+function walk (blocks, handle) {
   let walkPos = 0
   const blockContainers = []
   let blockContainerIndex
@@ -17,12 +17,12 @@ function walk (blocks, callback) {
       block.forEach(process)
     } else if (typeof block === 'object') {
       const format = Object.keys(block)[0]
-      callback('format-begin', format, {})
+      handle('format-begin', format, {})
       process(block[format])
       blockContainers.shift()
-      callback('format-end', format, {})
+      handle('format-end', format, {})
     } else {
-      callback('text', block, { walkPos, blockContainer: blockContainers[0], blockContainerIndex })
+      handle('text', block, { walkPos, blockContainer: blockContainers[0], blockContainerIndex })
       walkPos += block.length
     }
   }
@@ -92,7 +92,7 @@ const actions = {
 
   format,
 
-  debug () { debugger }
+  debug () { debugger } // eslint-disable-line
 }
 
 function html () {
