@@ -8,7 +8,6 @@ const pass = (title, markdown) => it(`accepts ${title}`, () => linter(marked.lex
 const fail = (title, markdown) => it(`rejects ${title}`, () => assert.throws(() => linter(marked.lexer(markdown))))
 
 describe('linter', () => {
-
   describe('heading', () => {
     pass('4 levels of depth', `
 # depth 1
@@ -17,9 +16,9 @@ describe('linter', () => {
 #### depth 4
 `)
 
-    fail('deeper than 4', `##### depth 5`)
-    fail('formatted content', `# *test*`)
-})
+    fail('deeper than 4', '##### depth 5')
+    fail('formatted content', '# *test*')
+  })
 
   describe('listings', () => {
     const code = '```'
@@ -43,7 +42,7 @@ This is a sample listing
 ${code}
 > This is *formatted*
 `)
-})
+  })
 
   describe('boxes', () => {
     pass('box syntax', `
@@ -62,5 +61,4 @@ ${code}
 >> content
 `)
   })
-
 })
