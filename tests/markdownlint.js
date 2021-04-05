@@ -1,9 +1,16 @@
-const { markdownlint } = require('markdownlint').promises
+const { markdownlint } = require('markdownlint').promises
 const { join } = require('path')
+const { readdir } = require('fs').promises
 
-markdownlint({
-  files: join(__dirname, 'linter', 'formatted header.md'),
-  customRules: [
-      require('../linter/non-formatted-header')
-  ]
-}).then(results => console.log(results))
+const samples = join(__dirname, 'linter')
+const rules = join(__dirname, '../linter')
+
+Promise.all([
+  readdir(samples),
+  readdir(rules)
+])
+  .then(([sampleFiles, ruleFiles]) => markdownlint({
+    files: sampleFiles.map(name => join(samples, name)),
+    customRules: ruleFiles.map(name => require(join(rules, name)))
+  }))
+  .then(console.log)
