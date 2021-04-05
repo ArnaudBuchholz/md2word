@@ -18,8 +18,6 @@ alert('hello world!')
 
 ## Sample code 3
 
-debug
-
 ```javascript
 alert('hello world!')
 ```
