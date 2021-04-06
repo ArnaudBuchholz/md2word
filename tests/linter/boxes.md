@@ -1,7 +1,5 @@
 # Boxes
 
-debug
-
 ## Valid box description
 
 > This is an unformatted title
