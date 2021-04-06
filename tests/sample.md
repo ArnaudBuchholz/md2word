@@ -18,7 +18,7 @@ The converter supports up to 4 heading styles.
 
 The next is a note
 
-> Note title
+> Note title (unformatted)
 >> This is the note content. You may use *formatting* as well
 
 ## Text styles
