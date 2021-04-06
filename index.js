@@ -3,14 +3,12 @@
 require('colors')
 const marked = require('marked')
 const { readFile } = require('fs').promises
-const linter = require('./linter')
 const renderer = require('./renderer')
 
 readFile(process.argv[2])
   .then(buffer => buffer.toString())
   .then(markdown => {
     const tokens = marked.lexer(markdown)
-    linter(tokens)
     renderer(tokens, function (command, ...parameters) {
       if (command.startsWith('end-')) {
         --this.indent
