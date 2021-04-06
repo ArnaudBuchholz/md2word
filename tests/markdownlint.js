@@ -16,12 +16,14 @@ const dump = {
   }
 }
 
+const filter = process.argv[2]
+
 Promise.all([
   readdir(samples),
   readdir(rules)
 ])
   .then(([sampleFiles, ruleFiles]) => markdownlint({
-    files: sampleFiles.map(name => join(samples, name)),
+    files: sampleFiles.filter(name => !filter || name.includes(filter)).map(name => join(samples, name)),
     customRules: [dump].concat(ruleFiles.map(name => require(join(rules, name))))
   }))
   .then(console.log)
