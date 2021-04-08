@@ -1,64 +1,60 @@
 'use strict'
 
 const assert = require('assert')
-const marked = require('marked')
-const linter = require('../../linter')
+const { markdownlint } = require('markdownlint').promises
+const { basename, join } = require('path')
+const { readdir } = require('fs').promises
 
-const pass = (title, markdown) => it(`accepts ${title}`, () => linter(marked.lexer(markdown)))
-const fail = (title, markdown) => it(`rejects ${title}`, () => assert.throws(() => linter(marked.lexer(markdown))))
+const samples = join(__dirname, '../linter')
+const rules = join(__dirname, '../../linter')
 
 describe('linter', () => {
-  describe('heading', () => {
-    pass('4 levels of depth', `
-# depth 1
-## depth 2
-### depth 3
-#### depth 4
-`)
+  let found
 
-    fail('deeper than 4', '##### depth 5')
-    fail('formatted content', '# *test*')
-  })
+  before(() => Promise.all([
+    readdir(samples),
+    readdir(rules)
+  ])
+    .then(([sampleFiles, ruleFiles]) => markdownlint({
+      files: sampleFiles.map(name => join(samples, name)),
+      customRules: ruleFiles.map(name => require(join(rules, name)))
+    }))
+    .then(results => {
+      found = Object.keys(results).reduce((dictionay, name) => {
+        const array = results[name]
+        dictionay[basename(name, '.md')] = array.reduce((errors, error) => {
+          errors[error.lineNumber] = error
+          return errors
+        }, {})
+        return dictionay
+      }, {})
+    })
+  )
 
-  describe('listings', () => {
-    const code = '```'
+  const expected = {
+    boxes: {
+      24: 'detects formatted titles',
+      29: 'detects multiline titles'
+    },
+    'formatted header': {
+      1: 'detects formatted header'
+    },
+    'header levels': {
+      9: 'detects header with level > 4'
+    },
+    'missing caption in code': {
+      5: 'detects missing caption for code example',
+      25: 'detects formatted caption'
+    }
+  }
 
-    pass('with caption', `
-${code}
-This is a sample listing
-${code}
-> This is the listing caption
-`)
-
-    fail('without caption', `
-${code}
-This is a sample listing
-${code}
-`)
-
-    fail('with formatted caption', `
-${code}
-This is a sample listing
-${code}
-> This is *formatted*
-`)
-  })
-
-  describe('boxes', () => {
-    pass('box syntax', `
-> title
->> content
-`)
-
-    fail('multiple titles', `
-> title 1
-> title 2
->> content
-`)
-
-    fail('formatted title', `
-> *title* 1
->> content
-`)
+  Object.keys(expected).forEach(name => {
+    describe(name, () => {
+      Object.keys(expected[name]).forEach(lineNumber => {
+        it(expected[name][lineNumber], () => {
+          assert.ok(found[name][lineNumber])
+        })
+      })
+    })
   })
 })
