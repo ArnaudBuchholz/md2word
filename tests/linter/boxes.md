@@ -36,7 +36,8 @@ Another example :
 >> This is the formatted content
 > Back to level 1... should not be allowed
 
-**NOTE** : the above seems to be parsed incorrectly by markdown-it (it is merged with the formatted content)
+**NOTE** : the above seems to be parsed incorrectly by markdown-it
+(it is merged with the formatted content)
 
 ## Last valid box description
 
