@@ -2,40 +2,36 @@
 
 const nop = token => console.log(token) // () => {}
 
+/*
 const escape = text => text
   .replace(/%/g, '%%')
   .replace(/\n?\n/g, '%N')
+*/
 
 const renderers = {
-  heading ({ depth, text }) { this.output('heading', depth, text) },
-  paragraph ({ tokens }) {
-    this.output('begin-paragraph')
-    render.call(this, tokens)
-    this.output('end-paragraph')
+  inline (token) {
+    render.call(this, token.children)
   },
-  text ({ text }) { this.output('text', escape(text)) },
-  space () {},
-  code ({ text }, index, tokens) {
-    const next = tokens[index + 1]
-    this.output('code-block', escape(text))
-    this.output('code-block-caption', next.tokens[0].tokens[0].text)
+
+  heading_open (token) {
+    this.format = token.tag
+    this.text = []
   },
-  blockquote (token) {
-    if (token._ignore) {
-      return
-    }
-    const [title, ...contentBlockquotes] = token.tokens
-    this.output('begin-box')
-    this.output('box-title', title.tokens[0].text)
-    contentBlockquotes.forEach(({ tokens }) => {
-      render.call(this, tokens)
-    })
-    this.output('end-box')
+
+  heading_close (token) {
+    const text = this.text.join('')
+    this.output(`text ${text}`)
+    this.output(`left ${text.length}`)
+    this.output(`select ${text.length}`)
+    this.output(`format ${this.format}`)
   },
-  strong ({ text }) { this.output('bold', text) },
-  em ({ text }) { this.output('italic', text) },
-  codespan ({ text }) { this.output('code-span', text) }
+
+  text (token) {
+    this.text.push(token.content)
+  }
 }
+
+// 
 
 function render (tokens) {
   tokens.forEach((token, index) => (renderers[token.type] || nop).call(this, token, index, tokens))
