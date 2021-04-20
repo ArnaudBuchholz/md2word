@@ -28,7 +28,7 @@ const renderers = {
     this.output(`left ${text.length}`)
     this.output(`select ${text.length}`)
     this.output(`format ${this.format}`)
-    this.output(`enter`)
+    this.output('enter')
   },
 
   text (token) {
@@ -48,13 +48,13 @@ const renderers = {
   },
 
   paragraph_close () {
-    if (this.text.length === 1 && this.text[0] === softbreak || this._inBlockQuote) {
+    if ((this.text.length === 1 && this.text[0] === softbreak) || this._inBlockQuote) {
       return // ignore
     }
     const text = this.text.map(t => t === softbreak ? '%N' : t).join('')
     this.output(`text ${text}`)
     // Process formatting (if any)
-    this.output(`enter`)
+    this.output('enter')
   },
 
   blockquote_close () {
@@ -64,7 +64,7 @@ const renderers = {
       this.output(`left ${text.length}`)
       this.output(`select ${text.length}`)
       this.output('format caption')
-      this.output(`enter`)
+      this.output('enter')
       delete this._nextIsCaption
     }
   },
@@ -76,14 +76,13 @@ const renderers = {
     this.output(`left ${text.length}`)
     this.output(`select ${text.length}`)
     this.output(`format code ${token.info}`)
-    this.output(`enter`)
+    this.output('enter')
     this._nextIsCaption = true
-  },
-
+  }
 
 }
 
-// 
+//
 
 function render (tokens) {
   tokens.forEach((token, index) => (renderers[token.type] || nop).call(this, token, index, tokens))
