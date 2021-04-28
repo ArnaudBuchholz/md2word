@@ -104,7 +104,7 @@ function html () {
   let lastFormat
   walk(this.blocks, (action, text, { walkPos }) => {
     if (action === 'format-begin') {
-      if (text !== 'br' || lastFormat !== 'h1') {
+      if (text !== 'br' || !['h1', 'code'].includes(lastFormat)) {
         result.push(`<${text}>`)
       }
     } else if (action === 'format-end') {
