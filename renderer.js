@@ -71,7 +71,7 @@ const renderers = {
 
   fence (token) {
     _reset.call(this)
-    const text = escape(token.content)
+    const text = escape(token.content.trim())
     this.output(`text ${text}`)
     this.output(`left ${text.length}`)
     this.output(`select ${text.length}`)
@@ -81,8 +81,6 @@ const renderers = {
   }
 
 }
-
-//
 
 function render (tokens) {
   tokens.forEach((token, index) => (renderers[token.type] || nop).call(this, token, index, tokens))
