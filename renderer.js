@@ -10,6 +10,9 @@ const escape = text => text
 
 function _reset () {
   this.text = []
+  this.length = 0
+  this.stylesInProgress = []
+  this.stylesToApply = []
 }
 
 const renderers = {
@@ -31,8 +34,9 @@ const renderers = {
     this.output('enter')
   },
 
-  text (token) {
-    this.text.push(token.content)
+  text ({ content }) {
+    this.text.push(content)
+    this.length += content.length
   },
 
   blockquote_open () {
@@ -53,6 +57,24 @@ const renderers = {
     }
     const text = this.text.map(t => t === softbreak ? '%N' : t).join('')
     this.output(`text ${text}`)
+    const length = text.length
+    let pos = length
+    this.stylesToApply.forEach(({ from, to, style }) => {
+      if (from < pos) {
+        this.output(`left ${pos - from}`)
+        pos -= from
+      } else {
+        this.output(`right ${from - pos}`)
+        pos += from
+      }
+      const length = to - from
+      this.output(`select ${length}`)
+      pos += length
+      this.output(`format ${style}`)
+    })
+    if (pos < length) {
+      this.output(`right ${length - pos}`)
+    }
     // Process formatting (if any)
     this.output('enter')
   },
@@ -78,8 +100,20 @@ const renderers = {
     this.output(`format code ${token.info}`)
     this.output('enter')
     this._nextIsCaption = true
-  }
+  },
 
+  em_open () {
+    this.stylesInProgress.push({
+      style: 'i',
+      from: this.length
+    })
+  },
+
+  em_close () {
+    const style = this.stylesInProgress.pop()
+    style.to = this.length
+    this.stylesToApply.push(style)
+  }
 }
 
 function render (tokens) {
