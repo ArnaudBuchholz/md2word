@@ -34,7 +34,7 @@ const renderers = {
     this.output('enter')
   },
 
-  text ({ content }) {
+  text ({ content }) {
     this.text.push(content)
     this.length += content.length
   },
