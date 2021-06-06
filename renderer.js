@@ -15,6 +15,24 @@ function _reset () {
   this.stylesToApply = []
 }
 
+function _startInlineFormatting (style) {
+  this.stylesInProgress.push({
+    style,
+    from: this.length
+  })
+}
+
+function _endInlineFormatting () {
+  const style = this.stylesInProgress.pop()
+  style.to = this.length
+  this.stylesToApply.unshift(style)
+}
+
+function _text ({ content }) {
+  this.text.push(content)
+  this.length += content.length
+}
+
 const renderers = {
   inline (token) {
     render.call(this, token.children)
@@ -34,10 +52,7 @@ const renderers = {
     this.output('enter')
   },
 
-  text ({ content }) {
-    this.text.push(content)
-    this.length += content.length
-  },
+  text: _text,
 
   blockquote_open () {
     this._inBlockQuote = true
@@ -98,22 +113,20 @@ const renderers = {
     this.output(`format code ${token.info}`)
     this.output('enter')
     this._nextIsCaption = true
+  },
+
+  code_inline (token) {
+    _startInlineFormatting.call(this, 'samp')
+    _text.call(this, token)
+    _endInlineFormatting.call(this)
   }
 }
 
 function handleInlineFormatting (tokenPrefix, style) {
   renderers[`${tokenPrefix}_open`] = function () {
-    this.stylesInProgress.push({
-      style,
-      from: this.length
-    })
+    _startInlineFormatting.call(this, style)
   }
-
-  renderers[`${tokenPrefix}_close`] = function () {
-    const style = this.stylesInProgress.pop()
-    style.to = this.length
-    this.stylesToApply.unshift(style)
-  }
+  renderers[`${tokenPrefix}_close`] = _endInlineFormatting
 }
 
 handleInlineFormatting('em', 'i')
