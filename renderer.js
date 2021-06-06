@@ -62,14 +62,12 @@ const renderers = {
     this.stylesToApply.forEach(({ from, to, style }) => {
       if (from < pos) {
         this.output(`left ${pos - from}`)
-        pos -= from
       } else {
         this.output(`right ${from - pos}`)
-        pos += from
       }
       const length = to - from
       this.output(`select ${length}`)
-      pos += length
+      pos = to
       this.output(`format ${style}`)
     })
     if (pos < length) {
@@ -100,21 +98,26 @@ const renderers = {
     this.output(`format code ${token.info}`)
     this.output('enter')
     this._nextIsCaption = true
-  },
-
-  em_open () {
-    this.stylesInProgress.push({
-      style: 'i',
-      from: this.length
-    })
-  },
-
-  em_close () {
-    const style = this.stylesInProgress.pop()
-    style.to = this.length
-    this.stylesToApply.push(style)
   }
 }
+
+function handleInlineFormatting (tokenPrefix, style) {
+  renderers[`${tokenPrefix}_open`] = function () {
+    this.stylesInProgress.push({
+      style,
+      from: this.length
+    })
+  }
+
+  renderers[`${tokenPrefix}_close`] = function () {
+    const style = this.stylesInProgress.pop()
+    style.to = this.length
+    this.stylesToApply.unshift(style)
+  }
+}
+
+handleInlineFormatting('em', 'i')
+handleInlineFormatting('strong', 'b')
 
 function render (tokens) {
   tokens.forEach((token, index) => (renderers[token.type] || nop).call(this, token, index, tokens))
