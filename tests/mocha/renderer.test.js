@@ -22,7 +22,13 @@ async function main () {
         const tokens = await md.parse(markdown)
         const commands = []
         renderer(tokens, command => commands.push(command))
-        const html = simulator(commands.join('\n'))
+        let html
+        try {
+          html = simulator(commands.join('\n'))
+        } catch (e) {
+          console.log(commands.join('\n'))
+          throw e
+        }
         assert.strictEqual(html, expected + '<cursor/>')
       })
     })
