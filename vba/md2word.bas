@@ -1,6 +1,5 @@
-Attribute VB_Name = "md2word"
 
-Private Sub dispatch(instruction, renderer)
+Private Sub dispatch(instruction)
   Dim commandSep As Integer
   commandSep = InStr(instruction, " ")
   Dim command As String
@@ -14,35 +13,32 @@ Private Sub dispatch(instruction, renderer)
   End If
 
   If command = "text" Then
-    Call renderer.text(parameter)
-  ElseIf command = "begin-paragraph" Then
-    renderer.beginParagraph
-  ElseIf command = "end-paragraph" Then
-    renderer.endParagraph
-  ElseIf command = "heading" Then
-    Dim sep As Integer
-    sep = InStr(parameter, " ")
-    Dim level As String
-    level = Left(parameter, sep - 1)
-    parameter = Mid(parameter, sep + 1)
-    renderer.heading level, parameter
-  ElseIf command = "italic" Then
-    Call renderer.italic(parameter)
-  ElseIf command = "bold" Then
-    Call renderer.bold(parameter)
+    Selection.TypeText text:=parameter
+  ' ElseIf command = "paragraph" Then
+  '  Selection.TypeParagraph
+  'ElseIf command = "style" Then
+  '  Call renderer.style(parameter)
+  ' ElseIf command = "begin-paragraph" Then
+  '  renderer.beginParagraph
+  ' ElseIf command = "end-paragraph" Then
+  '  renderer.endParagraph
+  ' ElseIf command = "style" Then
+  '  Call renderer.text(style)
+
   End If
-  
+
 End Sub
 
 
-Sub receive(renderer As IRenderer)
-  dispatch "heading 1 First heading", renderer
-  dispatch "heading 2 Sub heading", renderer
-  dispatch "begin-paragraph", renderer
-  dispatch "text This is an ", renderer
-  dispatch "italic example", renderer
-  dispatch "text  of ", renderer
-  dispatch "bold formatting", renderer
-  dispatch "end-paragraph", renderer
+Sub md2word()
+  Dim request As Object
+  Set request = CreateObject("MSXML2.XMLHTTP")
+  request.Open "GET", "http://localhost:53475/script", False
+  request.Send
+  Dim commands
+  commands = Split(request.ResponseText, vbLf)
+  Dim command
+  For Each command In commands
+    Call dispatch(command)
+  Next command
 End Sub
-
