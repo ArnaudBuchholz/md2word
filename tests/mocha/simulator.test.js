@@ -39,52 +39,52 @@ select 5`, 'Hello <selected>World</selected><cursor/>')
   test(`text Hello World
 left 5
 select 5
-format b`, 'Hello <b><selected>World</selected></b><cursor/>')
+format bold`, 'Hello <b><selected>World</selected></b><cursor/>')
 
   test(`text Hello World
 left 5
 select 5
-format b
+format bold
 right 1`, 'Hello <b>World</b><cursor/>')
 
   test(`text Hello World
 left 11
 select 11
-format b
+format bold
 left 5
 select 5
-format i
+format italic
 right 1`, '<b>Hello <i>World</i></b><cursor/>')
 
   test(`text Chapter 1
 left 9
 select 9
-format h1
+format header1
 enter
 text Hello World
 left 5
 select 5
-format b
+format bold
 left 3
 select 2
-format i
+format italic
 select 1
-format u
+format underline
 right 1`, '<h1>Chapter 1</h1>Hello <b>Wo<i>rl</i><u>d</u></b><cursor/>')
 
   test(`text Chapter 1
 left 9
 select 9
-format h1
+format header1
 enter
 text Hello World
 left 5
 select 5
-format b
+format bold
 left 3
 select 2
-format i
+format italic
 select 1
-format u
+format underline
 enter`, '<h1>Chapter 1</h1>Hello <b>Wo<i>rl</i><u>d</u></b><br><cursor/>')
 })
