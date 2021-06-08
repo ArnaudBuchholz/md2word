@@ -39,7 +39,12 @@ const renderers = {
   },
 
   heading_open (token) {
-    this.format = token.tag
+    this.format = {
+      h1: 'header1',
+      h2: 'header2',
+      h3: 'header3',
+      h4: 'header4'
+    }[token.tag]
     _reset.call(this)
   },
 
@@ -116,7 +121,7 @@ const renderers = {
   },
 
   code_inline (token) {
-    _startInlineFormatting.call(this, 'samp')
+    _startInlineFormatting.call(this, 'inline_code')
     _text.call(this, token)
     _endInlineFormatting.call(this)
   }
@@ -129,8 +134,8 @@ function handleInlineFormatting (tokenPrefix, style) {
   renderers[`${tokenPrefix}_close`] = _endInlineFormatting
 }
 
-handleInlineFormatting('em', 'i')
-handleInlineFormatting('strong', 'b')
+handleInlineFormatting('em', 'italic')
+handleInlineFormatting('strong', 'bold')
 
 function render (tokens) {
   tokens.forEach((token, index) => (renderers[token.type] || nop).call(this, token, index, tokens))
