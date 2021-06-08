@@ -14,21 +14,18 @@ Private Sub dispatch(instruction)
 
   If command = "text" Then
     Selection.TypeText text:=parameter
-  ' ElseIf command = "paragraph" Then
-  '  Selection.TypeParagraph
-  'ElseIf command = "style" Then
-  '  Call renderer.style(parameter)
-  ' ElseIf command = "begin-paragraph" Then
-  '  renderer.beginParagraph
-  ' ElseIf command = "end-paragraph" Then
-  '  renderer.endParagraph
-  ' ElseIf command = "style" Then
-  '  Call renderer.text(style)
+  ElseIf command = "left" Then
+    Selection.MoveLeft Unit:=wdCharacter, Count:=CInt(parameter)
+  ElseIf command = "right" Then
+    Selection.MoveRight Unit:=wdCharacter, Count:=CInt(parameter)
+  ElseIf command = "enter" Then
+    Selection.TypeParagraph
+  ElseIf command = "select" Then
+    Selection.MoveRight Unit:=wdCharacter, Count:=CInt(parameter), Extend:=wdExtend
+  ElseIf command = "format" Then
 
   End If
-
 End Sub
-
 
 Sub md2word()
   Dim request As Object
