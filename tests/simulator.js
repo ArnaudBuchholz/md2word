@@ -33,7 +33,20 @@ function walk (blocks, handle) {
 const int = value => parseInt(value, 10)
 
 function format (specifier) {
-  const [, tagName/*, info */] = /(\w+)(?: (.*))?/.exec(specifier)
+  const [, name/*, info */] = /(\w+)(?: (.*))?/.exec(specifier)
+  const tagName = {
+    header1: 'h1',
+    header2: 'h2',
+    header3: 'h3',
+    header4: 'h4',
+    bold: 'b',
+    italic: 'i',
+    underline: 'u',
+    code: 'code',
+    caption: 'caption',
+    inline_code: 'samp',
+    selected: 'selected'
+  }[name]
   walk(this.blocks, (action, text, { walkPos, blockContainer, blockContainerIndex }) => {
     const end = walkPos + text.length
     if (action === 'text' && this.selectFrom >= walkPos && this.selectFrom < end) {
