@@ -14,12 +14,13 @@ readFile(process.argv[2])
   })
   .then(tokens => {
     renderer(tokens, instruction => instructions.push(instruction))
+    const script = instructions.join('\n')
+    console.log(script)
     return check({
       port: 53475,
       mappings: [{
-        match: '\\/script$',
+        match: '\\/script(?:\\?.*)?$',
         custom: (request, response) => {
-          const script = instructions.join('\n')
           const length = (new TextEncoder().encode(script)).length
           response.writeHead(200, {
             'content-type': 'text/plain; charset=utf-8',
