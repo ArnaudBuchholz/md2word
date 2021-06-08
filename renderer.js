@@ -107,6 +107,7 @@ const renderers = {
       this.output('enter')
       delete this._nextIsCaption
     }
+    delete this._inBlockQuote
   },
 
   fence (token) {
