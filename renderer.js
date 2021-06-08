@@ -111,10 +111,11 @@ const renderers = {
 
   fence (token) {
     _reset.call(this)
-    const text = escape(token.content.trim())
+    const trimed = token.content.trim()
+    const text = escape(trimed)
     this.output(`text ${text}`)
-    this.output(`left ${text.length}`)
-    this.output(`select ${text.length}`)
+    this.output(`left ${trimed.length}`)
+    this.output(`select ${trimed.length}`)
     this.output(`format code ${token.info}`)
     this.output('enter')
     this._nextIsCaption = true
