@@ -76,9 +76,10 @@ const actions = {
       throw new Error('text allowed only at the end of the flow')
     }
     delete this.selectFrom
-    this.blocks.push(text.replace(/%N/g, '\n').replace(/%%/g, '%'))
-    this.pos += text.length
-    this.length += text.length
+    const unescaped = text.replace(/%N/g, '\n').replace(/%%/g, '%')
+    this.blocks.push(unescaped)
+    this.pos += unescaped.length
+    this.length += unescaped.length
   },
 
   left (count) {
