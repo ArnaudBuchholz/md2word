@@ -36,19 +36,19 @@ Private Sub dispatch(instruction)
   ElseIf command = "format" Then
     Dim style As String
     If parameter = "header1" Then
-      style = "Heading 1"
+      style = wdStyleHeading1
     ElseIf parameter = "header2" Then
-      style = "Heading 2"
+      style = wdStyleHeading2
     ElseIf parameter = "header3" Then
-      style = "Heading 3"
+      style = wdStyleHeading3
     ElseIf parameter = "header4" Then
-      style = "Heading 4"
+      style = wdStyleHeading4
     ElseIf parameter = "italic" Then
       Selection.Font.italic = wdToggle
     ElseIf parameter = "bold" Then
       Selection.Font.bold = wdToggle
     ElseIf InStr(1, parameter, "code ") = 1 Then
-      Selection.Font.Name = "Courier New"
+      Selection.Font.name = "Courier New"
       Selection.Font.Size = 8
     End If
     If Len(style) > 0 Then
@@ -58,12 +58,18 @@ Private Sub dispatch(instruction)
 End Sub
 
 Sub md2word()
-  Dim request As Object
-  Set request = CreateObject("MSXML2.XMLHTTP")
-  request.Open "GET", "http://localhost:53475/script?ts=" + CStr(Now), False
-  request.Send
+  Dim commands
+  If Len(Selection.text) > 0 Then
+    commands = Split(Selection.text, vbCr)
+  Else
+    Dim request As Object
+    Set request = CreateObject("MSXML2.XMLHTTP")
+    request.Open "GET", "http://localhost:53475/script?ts=" + CStr(Now), False
+    request.Send
+    commands = Split(request.ResponseText, vbLf)
+  End If
   Dim command
-  For Each command In Split(request.ResponseText, vbLf)
+  For Each command In commands
     Call dispatch(command)
   Next command
 End Sub
