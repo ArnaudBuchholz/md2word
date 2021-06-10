@@ -76,9 +76,9 @@ const renderers = {
     if ((this.text.length === 1 && this.text[0] === softbreak) || this._inBlockQuote) {
       return // ignore
     }
-    const text = this.text.map(t => t === softbreak ? '%N' : t).join('')
+    const text = this.text.map(t => t === softbreak ? '%N' : t.replace(/%/g, '%%')).join('')
     this.output(`text ${text}`)
-    const length = text.length
+    const length = this.length
     let pos = length
     this.stylesToApply.forEach(({ from, to, style }) => {
       if (from < pos) {
