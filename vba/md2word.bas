@@ -59,7 +59,7 @@ End Sub
 
 Sub md2word()
   Dim commands
-  If Len(Selection.text) > 0 Then
+  If Len(Selection.text) > 1 Then
     commands = Split(Selection.text, vbCr)
   Else
     Dim request As Object
