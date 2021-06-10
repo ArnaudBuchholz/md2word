@@ -18,7 +18,7 @@ async function main () {
       const testName = basename(name, '.md')
       it(testName, async () => {
         const markdown = (await readFile(join(folder, name))).toString()
-        const expected = (await readFile(join(folder, `${testName}.html`))).toString()
+        const expected = (await readFile(join(folder, `${testName}.html`))).toString().replace(/\r\n/g, '\n')
         const tokens = await md.parse(markdown)
         const commands = []
         renderer(tokens, command => commands.push(command))
