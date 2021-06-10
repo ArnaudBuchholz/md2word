@@ -69,6 +69,7 @@ const renderers = {
 
   softbreak () {
     this.text.push(softbreak)
+    ++this.length
   },
 
   paragraph_close () {
