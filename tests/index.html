@@ -1,5 +1,6 @@
 <body>
   <head>
+    <meta charset="UTF-8">
     <title>Word Simulator</title>
     <style>
 .cursor {
@@ -15,6 +16,10 @@
 .selected {
   background-color: #D0D0D0;
 }
+
+samp {
+  color: gray
+}
     </style>
     <script>
 const module = {}
@@ -25,29 +30,36 @@ const module = {}
     <table border="0" width="100%">
       <tr>
         <td width="50%">
-          <textarea id="rendered" cols="80" rows="40">
-text Chapter 1
-left 9
-select 9
-format header1
-enter
-text Hello World
-left 5
-select 5
-format bold
-left 3
-select 2
-format italic
-select 1
-format underline
-enter
-            </textarea><br />
-          <button>run</button>
+          <textarea id="markdown" cols="80" rows="20">
+The styles are distinguished by font and paragraph styles.
+A font style is only assigned to a single word within a paragraph
+(e.g., “**Bold**,” “*Italic*,” or “`Programming Element`”),
+while a paragraph style is assigned to an entire paragraph
+(e.g., "Normal" or "Bullet List").
+          </textarea><br />
+          <button id="render">render</button><br />
+          <textarea id="rendered" cols="80" rows="20">
+text The styles are distinguished by font and paragraph styles.%NA font style is only assigned to a single word within a paragraph%N(e.g., “Bold,” “Italic,” or “Programming Element”),%Nwhile a paragraph style is assigned to an entire paragraph%N(e.g., "Normal" or "Bullet List").
+left 122
+select 19
+          </textarea><br />
+          <button id="run">run</button>
         </td>
         <td id="result">&nbsp;</td>
     </table>
     <script>
-document.querySelector('button').addEventListener('click', () => {
+document.querySelector('#render').addEventListener('click', () => {
+  fetch('/render', {
+    method: 'POST',
+    body: document.getElementById('markdown').value,
+  })
+    .then(response => response.text())
+    .then(responseText => {
+      document.getElementById('rendered').value = responseText
+    })
+})
+
+document.querySelector('#run').addEventListener('click', () => {
   const html = module.exports(document.getElementById('rendered').value)
   document.getElementById('result').innerHTML = html
     .replace('<cursor/>', '<span class="cursor">|</span>')
