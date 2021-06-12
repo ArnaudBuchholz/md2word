@@ -17,7 +17,7 @@ function walk (blocks, handle) {
       block.forEach(process)
     } else if (typeof block === 'object') {
       const format = Object.keys(block)[0]
-      handle('format-begin', format, {})
+      handle('format-begin', format, { walkPos })
       process(block[format])
       blockContainers.shift()
       handle('format-end', format, {})
@@ -83,8 +83,12 @@ const actions = {
   },
 
   left (count) {
-    delete this.selectFrom
-    this.pos -= int(count)
+    if (this.selectFrom !== undefined) {
+      this.pos = this.selectFrom - count + 1
+      delete this.selectFrom
+    } else {
+      this.pos -= int(count)
+    }
   },
 
   select (count) {
@@ -93,8 +97,15 @@ const actions = {
   },
 
   right (count) {
-    delete this.selectFrom
-    this.pos = Math.min(this.length, this.pos + int(count))
+    if (this.selectFrom !== undefined) {
+      this.pos += int(count) - 1
+      delete this.selectFrom
+    } else {
+      this.pos += int(count)
+    }
+    if (this.pos > this.length) {
+      throw new Error(`right going out of bound (pos: ${this.pos}, length: ${this.length})`)
+    }
   },
 
   enter () {
@@ -110,6 +121,8 @@ const actions = {
   debug () { debugger } // eslint-disable-line
 }
 
+const cursor = '<cursor/>'
+
 function html () {
   if (this.selectFrom !== undefined) {
     format.call(this, 'selected')
@@ -117,6 +130,9 @@ function html () {
   const result = []
   let lastFormat
   walk(this.blocks, (action, text, { walkPos }) => {
+    if (this.pos === walkPos && !result.includes(cursor)) {
+      result.push(cursor)
+    }
     if (action === 'format-begin') {
       if (text !== 'br' || !['h1', 'code'].includes(lastFormat)) {
         result.push(`<${text}>`)
@@ -129,16 +145,16 @@ function html () {
     } else {
       // text
       const end = walkPos + text.length
-      if (this.pos >= walkPos && this.pos < end) {
+      if (this.pos > walkPos && this.pos < end) {
         const relPos = this.pos - walkPos
-        result.push(text.substring(0, relPos), '<cursor/>', text.substring(relPos))
+        result.push(text.substring(0, relPos), cursor, text.substring(relPos))
       } else {
         result.push(text)
       }
     }
   })
   if (this.pos === this.length) {
-    result.push('<cursor/>')
+    result.push(cursor)
   }
   return result.join('')
 }
