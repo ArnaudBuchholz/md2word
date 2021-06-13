@@ -79,20 +79,28 @@ const renderers = {
     const text = this.text.map(t => t === softbreak ? '%N' : t.replace(/%/g, '%%')).join('')
     this.output(`text ${text}`)
     const length = this.length
-    let pos = length
+    let leftPos = length
+    let rightPos = length
+    let selectionOffset = 0
     this.stylesToApply.forEach(({ from, to, style }) => {
-      if (from < pos) {
-        this.output(`left ${pos - from}`)
+      if (from < leftPos) {
+        this.output(`left ${leftPos - from + selectionOffset}`)
+      } else if (from > rightPos) {
+        this.output(`right ${from - rightPos + selectionOffset}`)
       } else {
-        this.output(`right ${from - pos}`)
+        this.output('left 1') // removes selection
+        this.output(`right ${from - leftPos}`)
       }
+      leftPos = from
+      rightPos = from
       const length = to - from
       this.output(`select ${length}`)
-      pos = to
+      rightPos = to
       this.output(`format ${style}`)
+      selectionOffset = 1
     })
-    if (pos < length) {
-      this.output(`right ${length - pos}`)
+    if (rightPos < length) {
+      this.output(`right ${length - rightPos + selectionOffset}`)
     }
     // Process formatting (if any)
     this.output('enter')
