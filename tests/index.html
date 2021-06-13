@@ -1,6 +1,8 @@
 <body>
   <head>
     <meta charset="UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.0.6/markdown-it.min.js"></script>
+    <script>const md = markdownit()</script>
     <title>Word Simulator</title>
     <style>
 .cursor {
@@ -20,11 +22,36 @@
 samp {
   color: gray
 }
+
+button {
+  margin: 8px;
+}
+
+textarea#rendered {
+  font-family: Courier New, Courier, Lucida Sans Typewriter, Lucida Typewriter, monospace;
+}
+
+div.background {
+  background: rgb(204,204,204); font-size:12px; font-family:Calibri;
+}
+
+.page {
+  width:595px;
+  height:842px;
+  margin:0 auto;
+  background:white;
+  box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+  padding:50px;
+  box-sizing:border-box;
+  margin-bottom: 18.89px;
+}
+
     </style>
-    <script>
-const module = {}
-    </script>
+    <script>const module = {}</script>
     <script src="simulator.js"></script>
+    <script>const simulator = module.exports</script>
+    <script src="renderer.js"></script>
+    <script>const renderer = module.exports</script>
   </head>
   <html>
     <table border="0" width="100%">
@@ -37,30 +64,32 @@ A font style is only assigned to a single word within a paragraph
 while a paragraph style is assigned to an entire paragraph
 (e.g., "Normal" or "Bullet List").
           </textarea><br />
-          <button id="render">render</button><br />
+          <button id="render">&#9196; render &#9196;</button><br />
           <textarea id="rendered" cols="80" rows="20">
 text The styles are distinguished by font and paragraph styles.%NA font style is only assigned to a single word within a paragraph%N(e.g., “Bold,” “Italic,” or “Programming Element”),%Nwhile a paragraph style is assigned to an entire paragraph%N(e.g., "Normal" or "Bullet List").
 left 122
 select 19
           </textarea><br />
-          <button id="run">run</button>
+          <button id="run">&#9193; run &#9193;</button>
         </td>
-        <td id="result">&nbsp;</td>
+        <td>
+          <div class="background">
+            <div class="page">
+              <div id="result"></div>
+            </div>
+          </div>
+        </td>
     </table>
     <script>
-document.querySelector('#render').addEventListener('click', () => {
-  fetch('/render', {
-    method: 'POST',
-    body: document.getElementById('markdown').value,
-  })
-    .then(response => response.text())
-    .then(responseText => {
-      document.getElementById('rendered').value = responseText
-    })
+document.querySelector('#render').addEventListener('click', async () => {
+  const instructions = []
+  const tokens = await md.parse(document.getElementById('markdown').value)
+  renderer(tokens, instruction => instructions.push(instruction))
+  document.getElementById('rendered').value = instructions.join('\n')
 })
 
 document.querySelector('#run').addEventListener('click', () => {
-  const html = module.exports(document.getElementById('rendered').value)
+  const html = simulator(document.getElementById('rendered').value)
   document.getElementById('result').innerHTML = html
     .replace('<cursor/>', '<span class="cursor">|</span>')
     .replace(/<selected>/g, '<span class="selected">')
