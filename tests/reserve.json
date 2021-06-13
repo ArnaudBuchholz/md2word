@@ -4,6 +4,9 @@
     "match": "^/mocha/.*",
     "status": 403
   }, {
+    "match": "^/renderer.js",
+    "file": "../renderer.js"
+  }, {
     "match": "^/render",
     "custom": "./render.js"
   }, {
