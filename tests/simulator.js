@@ -5,6 +5,8 @@
 { b: ["Hello ", { i: [ "World" ] }]
 */
 
+const br = Symbol('br')
+
 function walk (blocks, handle) {
   let walkPos = 0
   const blockContainers = []
@@ -23,7 +25,11 @@ function walk (blocks, handle) {
       handle('format-end', format, {})
     } else {
       handle('text', block, { walkPos, blockContainer: blockContainers[0], blockContainerIndex })
-      walkPos += block.length
+      if (block === br) {
+        ++walkPos
+      } else {
+        walkPos += block.length
+      }
     }
   }
 
@@ -113,7 +119,9 @@ const actions = {
       throw new Error('enter allowed only at the end of the flow')
     }
     delete this.selectFrom
-    this.blocks.push({ br: [] })
+    ++this.pos
+    ++this.length
+    this.blocks.push(br)
   },
 
   format,
@@ -134,14 +142,14 @@ function html () {
       result.push(cursor)
     }
     if (action === 'format-begin') {
-      if (text !== 'br' || !['h1', 'code'].includes(lastFormat)) {
-        result.push(`<${text}>`)
-      }
+      result.push(`<${text}>`)
     } else if (action === 'format-end') {
-      if (text !== 'br') {
-        lastFormat = text
-        result.push(`</${text}>`)
-      }
+      lastFormat = text
+      result.push(`</${text}>`)
+    } else if (text === br) {
+      if (!['h1', 'code'].includes(lastFormat)) {
+        result.push('<br>')
+      } // else useless
     } else {
       // text
       const end = walkPos + text.length
