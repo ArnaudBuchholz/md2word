@@ -27,12 +27,23 @@ button {
   margin: 8px;
 }
 
-textarea#rendered {
+textarea {
   font-family: Courier New, Courier, Lucida Sans Typewriter, Lucida Typewriter, monospace;
 }
 
+div.container {
+  display: flex;
+  flex-direction: row;
+}
+
+div.code {
+  flex-grow: 1; 
+}
+
 div.background {
+  flex-grow: 4; 
   background: rgb(204,204,204); font-size:12px; font-family:Calibri;
+  padding-top: 40px;
 }
 
 .page {
@@ -54,32 +65,29 @@ div.background {
     <script>const renderer = module.exports</script>
   </head>
   <html>
-    <table border="0" width="100%">
-      <tr>
-        <td width="50%">
-          <textarea id="markdown" cols="80" rows="20">
+    <div class="container">
+      <div class="code">
+        <textarea id="markdown" cols="40" rows="20">
 The styles are distinguished by font and paragraph styles.
 A font style is only assigned to a single word within a paragraph
 (e.g., “**Bold**,” “*Italic*,” or “`Programming Element`”),
 while a paragraph style is assigned to an entire paragraph
 (e.g., "Normal" or "Bullet List").
-          </textarea><br />
-          <button id="render">&#9196; render &#9196;</button><br />
-          <textarea id="rendered" cols="80" rows="20">
+        </textarea><br />
+        <button id="render">&#9196; render &#9196;</button><br />
+        <textarea id="rendered" cols="40" rows="20">
 text The styles are distinguished by font and paragraph styles.%NA font style is only assigned to a single word within a paragraph%N(e.g., “Bold,” “Italic,” or “Programming Element”),%Nwhile a paragraph style is assigned to an entire paragraph%N(e.g., "Normal" or "Bullet List").
 left 122
 select 19
-          </textarea><br />
-          <button id="run">&#9193; run &#9193;</button>
-        </td>
-        <td>
-          <div class="background">
-            <div class="page">
-              <div id="result"></div>
-            </div>
-          </div>
-        </td>
-    </table>
+        </textarea><br />
+        <button id="run">&#9193; run &#9193;</button>
+      </div>
+      <div class="background">
+        <div class="page">
+          <div id="result"></div>
+        </div>
+      </div>
+    </div>
     <script>
 document.querySelector('#render').addEventListener('click', async () => {
   const instructions = []
