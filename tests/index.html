@@ -19,8 +19,18 @@
   background-color: #D0D0D0;
 }
 
+code {
+  display: block;
+  white-space: pre;
+}
+
 samp {
   color: gray
+}
+
+figcaption {
+  padding-top: .5rem;
+  font-style: italic;
 }
 
 button {
@@ -68,17 +78,9 @@ div.background {
     <div class="container">
       <div class="code">
         <textarea id="markdown" cols="40" rows="20">
-The styles are distinguished by font and paragraph styles.
-A font style is only assigned to a single word within a paragraph
-(e.g., “**Bold**,” “*Italic*,” or “`Programming Element`”),
-while a paragraph style is assigned to an entire paragraph
-(e.g., "Normal" or "Bullet List").
         </textarea><br />
-        <button id="render">&#9196; render &#9196;</button><br />
+        <button id="render">&#9196; render &#9196;</button>&nbsp;<button id="renderRun">&#9196; render &amp; run &#9193;</button><br />
         <textarea id="rendered" cols="40" rows="20">
-text The styles are distinguished by font and paragraph styles.%NA font style is only assigned to a single word within a paragraph%N(e.g., “Bold,” “Italic,” or “Programming Element”),%Nwhile a paragraph style is assigned to an entire paragraph%N(e.g., "Normal" or "Bullet List").
-left 122
-select 19
         </textarea><br />
         <button id="run">&#9193; run &#9193;</button>
       </div>
@@ -89,20 +91,31 @@ select 19
       </div>
     </div>
     <script>
-document.querySelector('#render').addEventListener('click', async () => {
+async function onRender () {
   const instructions = []
-  const tokens = await md.parse(document.getElementById('markdown').value)
+  const markdown = document.getElementById('markdown').value
+  location.hash = encodeURI(markdown)
+  const tokens = await md.parse(markdown)
   renderer(tokens, instruction => instructions.push(instruction))
   document.getElementById('rendered').value = instructions.join('\n')
-})
+}
 
-document.querySelector('#run').addEventListener('click', () => {
+function onRun () {
   const html = simulator(document.getElementById('rendered').value)
   document.getElementById('result').innerHTML = html
     .replace('<cursor/>', '<span class="cursor">|</span>')
     .replace(/<selected>/g, '<span class="selected">')
     .replace(/<\/selected>/g, '</span>')
-})
+}
+
+document.querySelector('#render').addEventListener('click', onRender)
+document.querySelector('#renderRun').addEventListener('click', () => onRender().then(onRun))
+document.querySelector('#run').addEventListener('click', onRun)
+
+const param = location.hash
+if (param.length > 1) {
+  document.getElementById('markdown').value = decodeURI(param.toString().substring(1))
+}
     </script>
   </html>
 </body>
