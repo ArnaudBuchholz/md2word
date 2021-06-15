@@ -129,4 +129,20 @@ right 1
 select 1
 format underline
 enter`, '<h1>Chapter 1</h1>Hello <b>Wo<i>rl</i><u>d</u></b><br><cursor/>')
+
+ test(14, `text Box header
+left 10
+select 10
+format box_header
+enter
+text This is some formatted box content
+left 34
+select 34
+format box_content
+left 1
+right 13
+select 9
+format bold
+right 13
+enter`, '<div class="box_header">Box header</div><div class="box_content">This is some <b>formatted</b> box content</div><cursor/>')
 })
