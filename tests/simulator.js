@@ -159,7 +159,7 @@ function html () {
       result.push(cursor)
     }
     if (action === 'format-begin') {
-      const { format, info } = data
+      const { format/*, info */ } = data
       const mappedTagName = tagName(format)
       if (mappedTagName === 'div') {
         result.push(`<div class="${format}">`)
