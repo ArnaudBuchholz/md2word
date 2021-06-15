@@ -4,10 +4,6 @@ const nop = token => console.log(token) // () => {}
 
 const softbreak = Symbol('softbreak')
 
-const escape = text => text
-  .replace(/%/g, '%%')
-  .replace(/\n?\n/g, '%N')
-
 function _reset () {
   this.text = []
   this.length = 0
@@ -33,6 +29,50 @@ function _text ({ content }) {
   this.length += content.length
 }
 
+function _format (format) {
+  const text = this.text.map(t => t === softbreak ? '\n' : t).join('')
+  const escaped = text
+    .replace(/%/g, '%%')
+    .replace(/\r?\n/g, '%N')
+  this.output(`text ${escaped}`)
+  this.output(`left ${text.length}`)
+  this.output(`select ${text.length}`)
+  this.output(`format ${format}`)
+  this.output('enter')
+}
+
+function _paragraph (wrapper) {
+  const text = this.text.map(t => t === softbreak ? '%N' : t.replace(/%/g, '%%')).join('')
+  this.output(`text ${text}`)
+  const length = this.length
+  if (wrapper) {
+    wrapper(length)
+  }
+  let leftPos = length
+  let rightPos = length
+  let selectionOffset = 0
+  this.stylesToApply.forEach(({ from, to, style }) => {
+    if (from < leftPos) {
+      this.output(`left ${leftPos - from + selectionOffset}`)
+    } else if (from > rightPos) {
+      this.output(`right ${from - rightPos + selectionOffset}`)
+    } else {
+      this.output('left 1') // removes selection
+      this.output(`right ${from - leftPos}`)
+    }
+    leftPos = from
+    rightPos = from
+    const length = to - from
+    this.output(`select ${length}`)
+    rightPos = to
+    this.output(`format ${style}`)
+    selectionOffset = 1
+  })
+  if (rightPos < length) {
+    this.output(`right ${length - rightPos + selectionOffset}`)
+  }
+}
+
 const renderers = {
   inline (token) {
     render.call(this, token.children)
@@ -49,18 +89,20 @@ const renderers = {
   },
 
   heading_close (token) {
-    const text = this.text.join('')
-    this.output(`text ${text}`)
-    this.output(`left ${text.length}`)
-    this.output(`select ${text.length}`)
-    this.output(`format ${this.format}`)
-    this.output('enter')
+    _format.call(this, this.format)
   },
 
   text: _text,
 
   blockquote_open () {
-    this._inBlockQuote = true
+    if (!this._inBlockQuote) {
+      this._inBlockQuote = 1
+    } else {
+      if (this._inBlockQuote === 1) {
+        _format.call(this, 'box_header')
+      }
+      ++this._inBlockQuote
+    }
   },
 
   paragraph_open () {
@@ -76,58 +118,32 @@ const renderers = {
     if ((this.text.length === 1 && this.text[0] === softbreak) || this._inBlockQuote) {
       return // ignore
     }
-    const text = this.text.map(t => t === softbreak ? '%N' : t.replace(/%/g, '%%')).join('')
-    this.output(`text ${text}`)
-    const length = this.length
-    let leftPos = length
-    let rightPos = length
-    let selectionOffset = 0
-    this.stylesToApply.forEach(({ from, to, style }) => {
-      if (from < leftPos) {
-        this.output(`left ${leftPos - from + selectionOffset}`)
-      } else if (from > rightPos) {
-        this.output(`right ${from - rightPos + selectionOffset}`)
-      } else {
-        this.output('left 1') // removes selection
-        this.output(`right ${from - leftPos}`)
-      }
-      leftPos = from
-      rightPos = from
-      const length = to - from
-      this.output(`select ${length}`)
-      rightPos = to
-      this.output(`format ${style}`)
-      selectionOffset = 1
-    })
-    if (rightPos < length) {
-      this.output(`right ${length - rightPos + selectionOffset}`)
-    }
-    // Process formatting (if any)
+    _paragraph.call(this)
     this.output('enter')
   },
 
   blockquote_close () {
     if (this._nextIsCaption) {
-      const text = this.text.map(t => t === softbreak ? '%N' : t).join('')
-      this.output(`text ${text}`)
-      this.output(`left ${text.length}`)
-      this.output(`select ${text.length}`)
-      this.output('format caption')
-      this.output('enter')
+      _format.call(this, 'caption')
       delete this._nextIsCaption
     }
-    delete this._inBlockQuote
+    if (this._inBlockQuote === 2) {
+      _paragraph.call(this, length => {
+        this.output(`left ${length}`)
+        this.output(`select ${length}`)
+        this.output('format box_content')
+        this.output('right 1')
+      })
+    }
+    if (--this._inBlockQuote === 0) {
+      delete this._inBlockQuote
+    }
   },
 
   fence (token) {
     _reset.call(this)
-    const trimed = token.content.trim()
-    const text = escape(trimed)
-    this.output(`text ${text}`)
-    this.output(`left ${trimed.length}`)
-    this.output(`select ${trimed.length}`)
-    this.output(`format code ${token.info}`)
-    this.output('enter')
+    this.text = [token.content.trim()]
+    _format.call(this, `code ${token.info}`)
     this._nextIsCaption = true
   },
 
