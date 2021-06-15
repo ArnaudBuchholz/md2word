@@ -130,7 +130,7 @@ select 1
 format underline
 enter`, '<h1>Chapter 1</h1>Hello <b>Wo<i>rl</i><u>d</u></b><br><cursor/>')
 
- test(14, `text Box header
+  test(14, `text Box header
 left 10
 select 10
 format box_header
