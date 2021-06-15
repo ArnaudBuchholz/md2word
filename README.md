@@ -54,15 +54,17 @@ enter
 
 ### List of styles
 
-| Style name | Effect |
-|---|---|
-| header1 | <h1>Header level 1</h1> |
-| header2 | <h2>Header level 2</h2> |
-| header3 | <h3>Header level 3</h3> |
-| header4 | <h4>Header level 4</h4> |
-| bold | **bold** |
-| italic | *italic* |
-| underline | <u>underline</u> |
-| code | <code>code</code> |
-| caption | <figcaption>code or figure caption</figcaption> |
-| inline_code | <samp>inline code</samp> |
+| Style name | Style param | Effect |
+|---|---|---|
+| header1 | <i><small>n/a</small></i> | <h1>Header level 1</h1> |
+| header2 | <i><small>n/a</small></i> | <h2>Header level 2</h2> |
+| header3 | <i><small>n/a</small></i> | <h3>Header level 3</h3> |
+| header4 | <i><small>n/a</small></i> | <h4>Header level 4</h4> |
+| bold | <i><small>n/a</small></i> | **bold** |
+| italic | <i><small>n/a</small></i> | *italic* |
+| underline | <i><small>n/a</small></i> | <u>underline</u> |
+| code | language | <code>code</code> |
+| caption | <i><small>n/a</small></i> | <figcaption>code or figure caption</figcaption> |
+| inline_code | <i><small>n/a</small></i> | <samp>inline code</samp> |
+| box_header | <i><small>n/a</small></i> | Box header |
+| box_content | <i><small>n/a</small></i> | Box content |
