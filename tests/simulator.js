@@ -2,7 +2,20 @@
 
 /*
 **Hello *World***
-{ b: ["Hello ", { i: [ "World" ] }]
+{
+  tagName: 'bold',
+  info: undefined,
+  blocks: [
+    'Hello',
+    {
+      tagName: 'italic',
+      info: undefined,
+      blocks: [
+        'World'
+      ]
+    }
+  ]
+}
 */
 
 const br = Symbol('br')
@@ -18,9 +31,9 @@ function walk (blocks, handle) {
       blockContainers.unshift(block)
       block.forEach(process)
     } else if (typeof block === 'object') {
-      const format = Object.keys(block)[0]
-      handle('format-begin', format, { walkPos })
-      process(block[format])
+      const { format, info, blocks } = block
+      handle('format-begin', { format, info }, { walkPos })
+      process(blocks)
       blockContainers.shift()
       handle('format-end', format, {})
     } else {
@@ -38,21 +51,8 @@ function walk (blocks, handle) {
 
 const int = value => parseInt(value, 10)
 
-function format (specifier) {
-  const [, name/*, info */] = /(\w+)(?: (.*))?/.exec(specifier)
-  const tagName = {
-    header1: 'h1',
-    header2: 'h2',
-    header3: 'h3',
-    header4: 'h4',
-    bold: 'b',
-    italic: 'i',
-    underline: 'u',
-    code: 'code',
-    caption: 'figcaption',
-    inline_code: 'samp',
-    selected: 'selected'
-  }[name]
+function applyFormat (specifier) {
+  const [, format, info] = /(\w+)(?: (.*))?/.exec(specifier)
   walk(this.blocks, (action, text, { walkPos, blockContainer, blockContainerIndex }) => {
     const end = walkPos + text.length
     if (action === 'text' && this.selectFrom >= walkPos && this.selectFrom < end) {
@@ -65,9 +65,7 @@ function format (specifier) {
       if (relSelectFrom > 0) {
         newBlocks.push(text.substring(0, relSelectFrom))
       }
-      newBlocks.push({
-        [tagName]: [text.substring(relSelectFrom, relPos)]
-      })
+      newBlocks.push({ format, info, blocks: [text.substring(relSelectFrom, relPos)] })
       if (relPos < text.length) {
         newBlocks.push(text.substring(relPos))
       }
@@ -124,43 +122,65 @@ const actions = {
     this.blocks.push(br)
   },
 
-  format,
+  format: applyFormat,
 
   debug () { debugger } // eslint-disable-line
 }
 
 const cursor = '<cursor/>'
 
+function tagName (format) {
+  const mappings = {
+    header1: 'h1',
+    header2: 'h2',
+    header3: 'h3',
+    header4: 'h4',
+    bold: 'b',
+    italic: 'i',
+    underline: 'u',
+    code: 'code',
+    caption: 'figcaption',
+    inline_code: 'samp',
+    selected: 'selected'
+  }
+  return mappings[format]
+}
+
 function html () {
   if (this.selectFrom !== undefined) {
-    format.call(this, 'selected')
+    applyFormat.call(this, 'selected')
   }
   const result = []
   let lastFormat
-  walk(this.blocks, (action, text, { walkPos }) => {
+  walk(this.blocks, (action, data, { walkPos }) => {
     if (this.pos === walkPos && !result.includes(cursor)) {
       result.push(cursor)
     }
     if (action === 'format-begin') {
-      result.push(`<${text}>`)
+      const { format, info } = data
+      result.push(`<${tagName(format)}>`)
     } else if (action === 'format-end') {
-      lastFormat = text
-      result.push(`</${text}>`)
-    } else if (text === br) {
-      if (!['h1', 'code'].includes(lastFormat)) {
-        result.push('<br>')
-      } // else useless
+      const format = data
+      lastFormat = format
+      result.push(`</${tagName(format)}>`)
     } else {
-      // text
-      const end = walkPos + text.length
-      if (this.pos > walkPos && this.pos < end) {
-        const relPos = this.pos - walkPos
-        result.push(text.substring(0, relPos), cursor, text.substring(relPos))
+      const text = data
+      if (text === br) {
+        if (!['header1', 'header2', 'header3', 'header4', 'code'].includes(lastFormat)) {
+          result.push('<br>')
+        } // else useless
       } else {
-        result.push(text)
+        const end = walkPos + text.length
+        if (this.pos > walkPos && this.pos < end) {
+          const relPos = this.pos - walkPos
+          result.push(text.substring(0, relPos), cursor, text.substring(relPos))
+        } else {
+          result.push(text)
+        }
       }
     }
   })
+
   if (this.pos === this.length) {
     result.push(cursor)
   }
