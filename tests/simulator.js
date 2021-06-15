@@ -141,7 +141,9 @@ function tagName (format) {
     code: 'code',
     caption: 'figcaption',
     inline_code: 'samp',
-    selected: 'selected'
+    selected: 'selected',
+    box_header: 'div',
+    box_content: 'div'
   }
   return mappings[format]
 }
@@ -158,7 +160,12 @@ function html () {
     }
     if (action === 'format-begin') {
       const { format, info } = data
-      result.push(`<${tagName(format)}>`)
+      const mappedTagName = tagName(format)
+      if (mappedTagName === 'div') {
+        result.push(`<div class="${format}">`)
+      } else {
+        result.push(`<${mappedTagName}>`)
+      }
     } else if (action === 'format-end') {
       const format = data
       lastFormat = format
@@ -166,7 +173,7 @@ function html () {
     } else {
       const text = data
       if (text === br) {
-        if (!['header1', 'header2', 'header3', 'header4', 'code'].includes(lastFormat)) {
+        if (!['header1', 'header2', 'header3', 'header4', 'code'].includes(lastFormat) && tagName(lastFormat) !== 'div') {
           result.push('<br>')
         } // else useless
       } else {
