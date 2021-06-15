@@ -49,7 +49,7 @@ function format (specifier) {
     italic: 'i',
     underline: 'u',
     code: 'code',
-    caption: 'caption',
+    caption: 'figcaption',
     inline_code: 'samp',
     selected: 'selected'
   }[name]
