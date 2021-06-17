@@ -144,6 +144,21 @@ const renderers = {
     _reset.call(this)
     this.text = [token.content.trim()]
     _format.call(this, `code ${token.info}`)
+    _reset.call(this)
+    this._nextIsCaption = true
+  },
+
+  image (token) {
+    _reset.call(this)
+    const src = token.attrs.reduce((result, [attribute, value]) => {
+      if (attribute === 'src') {
+        return value
+      }
+      return result
+    }, '')
+    this.text = [src.trim()]
+    _format.call(this, 'image')
+    _reset.call(this)
     this._nextIsCaption = true
   },
 
