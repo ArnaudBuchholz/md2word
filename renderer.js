@@ -34,7 +34,7 @@ function _format (format) {
   const escaped = text
     .replace(/%/g, '%%')
     .replace(/\r?\n/g, '%N')
-  this.output(`text ${escaped}`)
+  this.output(`type ${escaped}`)
   this.output(`left ${text.length}`)
   this.output(`select ${text.length}`)
   this.output(`format ${format}`)
@@ -43,7 +43,7 @@ function _format (format) {
 
 function _paragraph (wrapper) {
   const text = this.text.map(t => t === softbreak ? '%N' : t.replace(/%/g, '%%')).join('')
-  this.output(`text ${text}`)
+  this.output(`type ${text}`)
   const length = this.length
   if (wrapper) {
     wrapper(length)
