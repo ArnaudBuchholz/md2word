@@ -145,4 +145,11 @@ select 9
 format bold
 right 13
 enter`, '<div class="box_header">Box header</div><div class="box_content">This is some <b>formatted</b> box content</div><cursor/>')
+
+  test(15, `type path.jpg
+left 8
+select 8
+format image
+enter
+`, '<img src="path.jpg"><cursor/>')
 })
