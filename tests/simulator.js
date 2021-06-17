@@ -2,7 +2,8 @@
 
 /*
 **Hello *World***
-{
+
+[{
   tagName: 'bold',
   info: undefined,
   blocks: [
@@ -15,7 +16,7 @@
       ]
     }
   ]
-}
+}]
 */
 
 const br = Symbol('br')
@@ -143,7 +144,8 @@ function tagName (format) {
     inline_code: 'samp',
     selected: 'selected',
     box_header: 'div',
-    box_content: 'div'
+    box_content: 'div',
+    image: 'img'
   }
   return mappings[format]
 }
@@ -163,17 +165,23 @@ function html () {
       const mappedTagName = tagName(format)
       if (mappedTagName === 'div') {
         result.push(`<div class="${format}">`)
-      } else {
+      } else if (mappedTagName !== 'img') {
         result.push(`<${mappedTagName}>`)
       }
     } else if (action === 'format-end') {
       const format = data
+      const mappedTagName = tagName(format)
+      if (mappedTagName === 'img') {
+        const url = result.pop()
+        result.push(`<img src="${url}">`)
+      } else {
+        result.push(`</${mappedTagName}>`)
+      }
       lastFormat = format
-      result.push(`</${tagName(format)}>`)
     } else {
       const text = data
       if (text === br) {
-        if (!['header1', 'header2', 'header3', 'header4', 'code'].includes(lastFormat) && tagName(lastFormat) !== 'div') {
+        if (!['header1', 'header2', 'header3', 'header4', 'code', 'image'].includes(lastFormat) && tagName(lastFormat) !== 'div') {
           result.push('<br>')
         } // else useless
       } else {
