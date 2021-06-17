@@ -46,7 +46,7 @@ enter
 
 | Command | Parameter | Explanation |
 |---|---|---|
-| text | escaped text (%N instead of carriage return) | type some text. Cursor is set after the text. |
+| type | escaped text (%N instead of carriage return) | Type some text. Cursor is set after the text. |
 | left | character count | Moves the cursor to the left |
 | right | character count | Moves the cursor to the right |
 | select | character count | Moves the cursor to the right and selects underlying text |
@@ -68,3 +68,4 @@ enter
 | inline_code | <i><small>n/a</small></i> | <samp>inline code</samp> |
 | box_header | <i><small>n/a</small></i> | Box header |
 | box_content | <i><small>n/a</small></i> | Box content |
+| image | <i><small>n/a</small></i> | Convert the selected path into an image path
