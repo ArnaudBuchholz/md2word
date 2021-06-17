@@ -75,9 +75,9 @@ function applyFormat (specifier) {
 }
 
 const actions = {
-  text (text) {
+  type (text) {
     if (this.pos !== this.length) {
-      throw new Error('text allowed only at the end of the flow')
+      throw new Error('type allowed only at the end of the flow')
     }
     delete this.selectFrom
     const unescaped = text.replace(/%N/g, '\n').replace(/%%/g, '%')
