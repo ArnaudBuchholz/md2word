@@ -12,7 +12,7 @@ Private Sub dispatch(instruction)
     parameter = ""
   End If
 
-  If command = "text" Then
+  If command = "type" Then
     Dim line
     Dim count
     count = 0
