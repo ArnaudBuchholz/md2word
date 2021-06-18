@@ -48,12 +48,19 @@ Private Sub dispatch(instruction)
     ElseIf parameter = "bold" Then
       Selection.Font.bold = wdToggle
     ElseIf InStr(1, parameter, "code ") = 1 Then
-      Selection.Font.name = "Courier New"
+      Selection.Font.Name = "Courier New"
       Selection.Font.Size = 8
+    Else
+      style = parameter
     End If
     If Len(style) > 0 Then
+      On Error GoTo cantApplyStyle
       Selection.style = ActiveDocument.Styles(style)
+      On Error GoTo 0
     End If
+    Exit Sub
+cantApplyStyle:
+    MsgBox "Can't apply style '" & style & "'" & vbCrLf & Err.Description
   End If
 End Sub
 
