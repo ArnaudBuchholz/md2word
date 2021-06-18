@@ -128,60 +128,70 @@ const actions = {
   debug () { debugger } // eslint-disable-line
 }
 
-const cursor = '<cursor/>'
-
-function tagName (format) {
-  const mappings = {
-    header1: 'h1',
-    header2: 'h2',
-    header3: 'h3',
-    header4: 'h4',
-    bold: 'b',
-    italic: 'i',
-    underline: 'u',
-    code: 'code',
-    caption: 'figcaption',
-    inline_code: 'samp',
-    selected: 'selected',
-    box_header: 'div',
-    box_content: 'div',
-    image: 'img'
-  }
-  return mappings[format]
-}
-
 function html () {
+  const cursor = '<cursor/>'
+  const mappings = {
+    header1: { tagName: 'h1', block: true },
+    header2: { tagName: 'h2', block: true },
+    header3: { tagName: 'h3', block: true },
+    header4: { tagName: 'h4', block: true },
+    bold: { tagName: 'b' },
+    italic: { tagName: 'i' },
+    underline: { tagName: 'u' },
+    code: { tagName: 'code', block: true },
+    caption: { tagName: 'figcaption', block: true },
+    inline_code: { tagName: 'samp' },
+    selected: { tagName: 'selected' },
+    box_header: { tagName: 'div', block: true },
+    box_content: { tagName: 'div', block: true },
+    image: { tagName: 'img', block: true },
+    bullet_list: { tagName: 'li', block: true }
+  }
+
   if (this.selectFrom !== undefined) {
     applyFormat.call(this, 'selected')
   }
   const result = []
   let lastFormat
+  let inBulletList = false
   walk(this.blocks, (action, data, { walkPos }) => {
     if (this.pos === walkPos && !result.includes(cursor)) {
       result.push(cursor)
     }
     if (action === 'format-begin') {
       const { format/*, info */ } = data
-      const mappedTagName = tagName(format)
-      if (mappedTagName === 'div') {
-        result.push(`<div class="${format}">`)
-      } else if (mappedTagName !== 'img') {
-        result.push(`<${mappedTagName}>`)
+      const { tagName, block } = mappings[format]
+      if (tagName === 'li') {
+        if (!inBulletList) {
+          inBulletList = true
+          result.push('<ul>')
+        }
+        result.push('<li>')
+      } else {
+        if (block && lastFormat === 'li') {
+          inBulletList = false
+          result.push('</ul>')
+        }
+        if (tagName === 'div') {
+          result.push(`<div class="${format}">`)
+        } else if (tagName !== 'img') {
+          result.push(`<${tagName}>`)
+        }
       }
     } else if (action === 'format-end') {
       const format = data
-      const mappedTagName = tagName(format)
-      if (mappedTagName === 'img') {
+      const { tagName } = mappings[format]
+      if (tagName === 'img') {
         const url = result.pop()
         result.push(`<img src="${url}">`)
       } else {
-        result.push(`</${mappedTagName}>`)
+        result.push(`</${tagName}>`)
       }
       lastFormat = format
     } else {
       const text = data
       if (text === br) {
-        if (!['header1', 'header2', 'header3', 'header4', 'code', 'image'].includes(lastFormat) && tagName(lastFormat) !== 'div') {
+        if (!lastFormat || !mappings[lastFormat].block) {
           result.push('<br>')
         } // else useless
       } else {
@@ -195,7 +205,9 @@ function html () {
       }
     }
   })
-
+  if (inBulletList) {
+    result.push('</ul>')
+  }
   if (this.pos === this.length) {
     result.push(cursor)
   }
