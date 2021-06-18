@@ -152,4 +152,16 @@ select 8
 format image
 enter
 `, '<img src="path.jpg"><cursor/>')
+
+  test(16, `type item 1
+left 6
+select 6
+format bullet_list
+enter
+type item 2
+left 6
+select 6
+format bullet_list
+enter
+`, '<ul><li>item 1</li><li>item 2</li></ul><cursor/>')
 })
