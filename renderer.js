@@ -134,6 +134,7 @@ const renderers = {
         this.output('format box_content')
         this.output('right 1')
       })
+      this.output('enter')
     }
     if (--this._inBlockQuote === 0) {
       delete this._inBlockQuote
