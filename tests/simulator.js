@@ -168,7 +168,7 @@ function html () {
         }
         result.push('<li>')
       } else {
-        if (block && lastFormat === 'li') {
+        if (block && lastFormat === 'bullet_list') {
           inBulletList = false
           result.push('</ul>')
         }
