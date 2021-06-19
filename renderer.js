@@ -73,6 +73,23 @@ function _paragraph (wrapper) {
   }
 }
 
+function _incLevel (member) {
+  if (!this[member]) {
+    this[member] = 1
+  } else {
+    ++this[member]
+  }
+  return this[member]
+}
+
+function _decLevel (member) {
+  if (--this[member] === 0) {
+    delete this[member]
+    return 0
+  }
+  return this[member]
+}
+
 const renderers = {
   inline (token) {
     render.call(this, token.children)
@@ -95,31 +112,9 @@ const renderers = {
   text: _text,
 
   blockquote_open () {
-    if (!this._inBlockQuote) {
-      this._inBlockQuote = 1
-    } else {
-      if (this._inBlockQuote === 1) {
-        _format.call(this, 'box_header')
-      }
-      ++this._inBlockQuote
+    if (_incLevel.call(this, '_inBlockQuote') === 2) {
+      _format.call(this, 'box_header')
     }
-  },
-
-  paragraph_open () {
-    _reset.call(this)
-  },
-
-  softbreak () {
-    this.text.push(softbreak)
-    ++this.length
-  },
-
-  paragraph_close () {
-    if ((this.text.length === 1 && this.text[0] === softbreak) || this._inBlockQuote) {
-      return // ignore
-    }
-    _paragraph.call(this)
-    this.output('enter')
   },
 
   blockquote_close () {
@@ -136,9 +131,24 @@ const renderers = {
       })
       this.output('enter')
     }
-    if (--this._inBlockQuote === 0) {
-      delete this._inBlockQuote
+    _decLevel.call(this, '_inBlockQuote')
+  },
+
+  paragraph_open () {
+    _reset.call(this)
+  },
+
+  softbreak () {
+    this.text.push(softbreak)
+    ++this.length
+  },
+
+  paragraph_close () {
+    if ((this.text.length === 1 && this.text[0] === softbreak) || this._inBlockQuote || this._inBulletList) {
+      return // ignore
     }
+    _paragraph.call(this)
+    this.output('enter')
   },
 
   fence (token) {
@@ -167,6 +177,28 @@ const renderers = {
     _startInlineFormatting.call(this, 'inline_code')
     _text.call(this, token)
     _endInlineFormatting.call(this)
+  },
+
+  bullet_list_open (token) {
+    _incLevel.call(this, '_inBulletList')
+  },
+
+  list_item_open (token) {
+    _reset.call(this)
+  },
+
+  list_item_close (token) {
+    _paragraph.call(this, length => {
+      this.output(`left ${length}`)
+      this.output(`select ${length}`)
+      this.output('format bullet_list')
+      this.output('right 1')
+    })
+    this.output('enter')
+  },
+
+  bullet_list_close (token) {
+    _decLevel.call(this, '_inBulletList')
   }
 }
 
