@@ -68,4 +68,5 @@ enter
 | inline_code | <i><small>n/a</small></i> | <samp>inline code</samp> |
 | box_header | <i><small>n/a</small></i> | Box header |
 | box_content | <i><small>n/a</small></i> | Box content |
-| image | <i><small>n/a</small></i> | Convert the selected path into an image path
+| image | <i><small>n/a</small></i> | Convert the selected path into an image path |
+| bullet_list | level (1-based) | bullet list item |
