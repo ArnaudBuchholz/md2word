@@ -108,7 +108,10 @@ async function onRender () {
   const markdown = document.getElementById('markdown').value
   location.hash = encodeURI(markdown)
   const tokens = await md.parse(markdown)
-  renderer(tokens, instruction => instructions.push(instruction))
+  renderer(tokens, instruction => {
+    console.log(instruction)
+    instructions.push(instruction)
+  })
   document.getElementById('rendered').value = instructions.join('\n')
 }
 
