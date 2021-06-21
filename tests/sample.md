@@ -3,6 +3,10 @@
 You can find the most important and useful features of the converter in this sample.
 Now let’s see what you can do with the converter.
 
+![Markdown](markdown.png)
+
+> Markdown logo
+
 ## Heading Styles
 
 The converter supports up to 4 heading styles.
