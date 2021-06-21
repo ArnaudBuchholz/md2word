@@ -1,5 +1,6 @@
 'use strict'
 
+const { dirname, isAbsolute, join } = require('path')
 const md = require('markdown-it')()
 const { readFile } = require('fs').promises
 const renderer = require('./renderer')
@@ -8,6 +9,13 @@ const { check, log, serve } = require('reserve')
 const instructions = []
 
 const mdFilename = process.argv[2]
+let basePath
+
+if (isAbsolute(mdFilename)) {
+  basePath = dirname(mdFilename)
+} else {
+  basePath = dirname(join(process.cwd(), mdFilename))
+}
 
 readFile(mdFilename)
   .then(buffer => buffer.toString())
@@ -15,9 +23,7 @@ readFile(mdFilename)
     return md.parse(markdown)
   })
   .then(tokens => {
-    renderer(tokens, instruction => instructions.push(instruction), {
-      mdFilename
-    })
+    renderer(tokens, instruction => instructions.push(instruction), { basePath })
     const script = instructions.join('\n')
     console.log(script)
     return check({
