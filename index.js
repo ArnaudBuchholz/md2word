@@ -7,13 +7,17 @@ const { check, log, serve } = require('reserve')
 
 const instructions = []
 
-readFile(process.argv[2])
+const mdFilename = process.argv[2]
+
+readFile(mdFilename)
   .then(buffer => buffer.toString())
   .then(markdown => {
     return md.parse(markdown)
   })
   .then(tokens => {
-    renderer(tokens, instruction => instructions.push(instruction))
+    renderer(tokens, instruction => instructions.push(instruction), {
+      mdFilename
+    })
     const script = instructions.join('\n')
     console.log(script)
     return check({
