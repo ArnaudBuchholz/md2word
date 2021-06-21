@@ -1,5 +1,7 @@
 'use strict'
 
+const { join } = require('path')
+
 const nop = token => console.log(token) // () => {}
 
 const softbreak = Symbol('softbreak')
@@ -144,7 +146,7 @@ const renderers = {
   },
 
   paragraph_close () {
-    if ((this.text.length === 1 && this.text[0] === softbreak) || this._inBlockQuote || this._inBulletList) {
+    if ((this.text.length === 1 && this.text[0] === softbreak) || this._inBlockQuote || this._inBulletList) {
       return // ignore
     }
     _paragraph.call(this)
@@ -161,13 +163,16 @@ const renderers = {
 
   image (token) {
     _reset.call(this)
-    const src = token.attrs.reduce((result, [attribute, value]) => {
+    let src = token.attrs.reduce((result, [attribute, value]) => {
       if (attribute === 'src') {
-        return value
+        return value.trim()
       }
       return result
     }, '')
-    this.text = [src.trim()]
+    if (this.basePath) {
+      src = join(this.basePath, src)
+    }
+    this.text = [src]
     _format.call(this, 'image')
     _reset.call(this)
     this._nextIsCaption = true
@@ -216,4 +221,4 @@ function render (tokens) {
   tokens.forEach((token, index) => (renderers[token.type] || nop).call(this, token, index, tokens))
 }
 
-module.exports = (tokens, output) => render.call({ output }, tokens)
+module.exports = (tokens, output, settings = {}) => render.call({ output, ...settings }, tokens)
