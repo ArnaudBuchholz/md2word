@@ -44,12 +44,16 @@ Private Sub dispatch(instruction)
     ElseIf parameter = "header4" Then
       style = wdStyleHeading4
     ElseIf parameter = "italic" Then
-      Selection.Font.italic = wdToggle
+      Selection.Font.Italic = wdToggle
     ElseIf parameter = "bold" Then
-      Selection.Font.bold = wdToggle
+      Selection.Font.Bold = wdToggle
     ElseIf InStr(1, parameter, "code ") = 1 Then
       Selection.Font.Name = "Courier New"
       Selection.Font.Size = 8
+    ElseIf parameter = "image" Then
+      Dim filename
+      filename = Selection.text
+      Selection.InlineShapes.AddPicture filename:=filename, LinkToFile:=False, SaveWithDocument:=True
     Else
       style = parameter
     End If
@@ -80,3 +84,4 @@ Sub md2word()
     Call dispatch(command)
   Next command
 End Sub
+
