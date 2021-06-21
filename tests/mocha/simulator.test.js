@@ -181,5 +181,4 @@ select 5
 format header1
 enter
 `, '<ul><li>item 1</li><li>item 2</li></ul><h1>title</h1><cursor/>')
-
 })
