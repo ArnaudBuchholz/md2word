@@ -3,3 +3,6 @@
 
 # PNG images
 *.png -text
+
+# Word document
+*.doc -text
