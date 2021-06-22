@@ -156,24 +156,24 @@ enter
   test(16, `type item 1
 left 6
 select 6
-format bullet_list
+format bullet_list 1
 enter
 type item 2
 left 6
 select 6
-format bullet_list
+format bullet_list 1
 enter
 `, '<ul><li>item 1</li><li>item 2</li></ul><cursor/>')
 
   test(17, `type item 1
 left 6
 select 6
-format bullet_list
+format bullet_list 1
 enter
 type item 2
 left 6
 select 6
-format bullet_list
+format bullet_list 1
 enter
 type title
 left 5
@@ -181,4 +181,16 @@ select 5
 format header1
 enter
 `, '<ul><li>item 1</li><li>item 2</li></ul><h1>title</h1><cursor/>')
+
+  test(18, `type item 1
+left 6
+select 6
+format bullet_list 1
+enter
+type item 2
+left 6
+select 6
+format bullet_list 2
+enter
+`, '<ul><li>item 1</li><ul><li>item 2</li></ul></ul><cursor/>')
 })
