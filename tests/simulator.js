@@ -153,24 +153,32 @@ function html () {
   }
   const result = []
   let lastFormat
-  let inBulletList = false
+  let inBulletList = 0
+
+  function closeBulletLists () {
+    while (inBulletList > 0) {
+      result.push('</ul>')
+      --inBulletList
+    }
+  }
+
   walk(this.blocks, (action, data, { walkPos }) => {
     if (this.pos === walkPos && !result.includes(cursor)) {
       result.push(cursor)
     }
     if (action === 'format-begin') {
-      const { format/*, info */ } = data
+      const { format, info } = data
       const { tagName, block } = mappings[format]
       if (tagName === 'li') {
-        if (!inBulletList) {
-          inBulletList = true
+        const level = parseInt(info, 10)
+        if (inBulletList !== level) {
+          ++inBulletList
           result.push('<ul>')
         }
         result.push('<li>')
       } else {
         if (block && lastFormat === 'bullet_list') {
-          inBulletList = false
-          result.push('</ul>')
+          closeBulletLists()
         }
         if (tagName === 'div') {
           result.push(`<div class="${format}">`)
@@ -205,9 +213,7 @@ function html () {
       }
     }
   })
-  if (inBulletList) {
-    result.push('</ul>')
-  }
+  closeBulletLists()
   if (this.pos === this.length) {
     result.push(cursor)
   }
