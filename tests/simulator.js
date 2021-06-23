@@ -171,9 +171,13 @@ function html () {
       const { tagName, block } = mappings[format]
       if (tagName === 'li') {
         const level = parseInt(info, 10)
-        if (inBulletList !== level) {
+        while (inBulletList < level) {
           ++inBulletList
           result.push('<ul>')
+        }
+        while (inBulletList > level) {
+          --inBulletList
+          result.push('</ul>')
         }
         result.push('<li>')
       } else {
