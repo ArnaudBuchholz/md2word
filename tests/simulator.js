@@ -50,8 +50,6 @@ function walk (blocks, handle) {
   process(blocks)
 }
 
-const int = value => parseInt(value, 10)
-
 function applyFormat (specifier) {
   const [, format, info] = /(\w+)(?: (.*))?/.exec(specifier)
   walk(this.blocks, (action, text, { walkPos, blockContainer, blockContainerIndex }) => {
@@ -74,6 +72,8 @@ function applyFormat (specifier) {
     }
   })
 }
+
+const int = value => parseInt(value, 10)
 
 const actions = {
   type (text) {
@@ -155,8 +155,8 @@ function html () {
   let lastFormat
   let inBulletList = 0
 
-  function closeBulletLists () {
-    while (inBulletList > 0) {
+  function closeBulletLists (level = 0) {
+    while (inBulletList > level) {
       result.push('</ul>')
       --inBulletList
     }
@@ -175,10 +175,7 @@ function html () {
           ++inBulletList
           result.push('<ul>')
         }
-        while (inBulletList > level) {
-          --inBulletList
-          result.push('</ul>')
-        }
+        closeBulletLists(level)
         result.push('<li>')
       } else {
         if (block && lastFormat === 'bullet_list') {
