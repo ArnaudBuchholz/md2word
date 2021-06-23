@@ -4,7 +4,7 @@
   "description": "Markdown to Word automation",
   "main": "index.js",
   "scripts": {
-    "test": "standard && mocha",
+    "test": "mocha",
     "lint": "standard --fix",
     "mocha": "mocha",
     "mocha-dbg": "node --inspect-brk node_modules/mocha/bin/_mocha",
