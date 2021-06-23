@@ -92,6 +92,17 @@ function _decLevel (member) {
   return this[member]
 }
 
+function _bulletListItem () {
+  _paragraph.call(this, length => {
+    this.output(`left ${length}`)
+    this.output(`select ${length}`)
+    this.output(`format bullet_list ${this._inBulletList}`)
+    this.output('right 1')
+  })
+  this.output('enter')
+  _reset.call(this)
+}
+
 const renderers = {
   inline (token) {
     render.call(this, token.children)
@@ -185,21 +196,19 @@ const renderers = {
   },
 
   bullet_list_open (token) {
+    if (this._inBulletList) {
+      _bulletListItem.call(this)
+    }
     _incLevel.call(this, '_inBulletList')
   },
 
   list_item_open (token) {
-    _reset.call(this)
   },
 
   list_item_close (token) {
-    _paragraph.call(this, length => {
-      this.output(`left ${length}`)
-      this.output(`select ${length}`)
-      this.output('format bullet_list')
-      this.output('right 1')
-    })
-    this.output('enter')
+    if (this.length) {
+      _bulletListItem.call(this)
+    }
   },
 
   bullet_list_close (token) {
