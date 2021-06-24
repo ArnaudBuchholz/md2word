@@ -147,21 +147,22 @@ function html () {
     image: { tagName: 'img', block: true },
     bullet_list: { tagName: 'li', block: true }
   }
-
-  if (this.selectFrom !== undefined) {
-    applyFormat.call(this, 'selected')
-  }
   const result = []
   let lastFormat
   let inBulletList = 0
+  let isInFormat = 0
 
   function closeBulletLists (level = 0) {
     while (inBulletList > level) {
       result.push('</ul>')
       --inBulletList
     }
+    lastFormat = undefined
   }
 
+  if (this.selectFrom !== undefined) {
+    applyFormat.call(this, 'selected')
+  }
   walk(this.blocks, (action, data, { walkPos }) => {
     if (this.pos === walkPos && !result.includes(cursor)) {
       result.push(cursor)
@@ -169,6 +170,7 @@ function html () {
     if (action === 'format-begin') {
       const { format, info } = data
       const { tagName, block } = mappings[format]
+      ++isInFormat
       if (tagName === 'li') {
         const level = parseInt(info, 10)
         while (inBulletList < level) {
@@ -197,6 +199,7 @@ function html () {
         result.push(`</${tagName}>`)
       }
       lastFormat = format
+      --isInFormat
     } else {
       const text = data
       if (text === br) {
@@ -204,6 +207,9 @@ function html () {
           result.push('<br>')
         } // else useless
       } else {
+        if (!isInFormat && inBulletList) {
+          closeBulletLists()
+        }
         const end = walkPos + text.length
         if (this.pos > walkPos && this.pos < end) {
           const relPos = this.pos - walkPos
