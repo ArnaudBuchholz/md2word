@@ -78,10 +78,10 @@ steps in a process; they imply that steps are being performed in a particular or
 
 1. The first item in the list has its own style: Numbered List 1st.
 2. The second and all following items have all the same style:
-
 Numbered List 2.-n. (Don’t worry: The final typeset version of the book will
 show the correct numbering.) You can use the Bullet List Listing style
 (from the Listing section) with numbered lists.
+
 You can use the Bullet List Indent style to start a new paragraph within numbered
 lists.
 
