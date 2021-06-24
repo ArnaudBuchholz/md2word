@@ -92,11 +92,12 @@ function _decLevel (member) {
   return this[member]
 }
 
-function _bulletListItem () {
+function _listItem () {
   _paragraph.call(this, length => {
     this.output(`left ${length}`)
     this.output(`select ${length}`)
-    this.output(`format bullet_list ${this._inBulletList}`)
+    const type = this.lists[this.lists.length - 1]
+    this.output(`format ${type}_list ${this.lists.length}`)
     this.output('right 1')
   })
   this.output('enter')
@@ -157,7 +158,7 @@ const renderers = {
   },
 
   paragraph_close () {
-    if ((this.text.length === 1 && this.text[0] === softbreak) || this._inBlockQuote || this._inBulletList) {
+    if ((this.text.length === 1 && this.text[0] === softbreak) || this._inBlockQuote || this.lists.length) {
       return // ignore
     }
     _paragraph.call(this)
@@ -196,10 +197,17 @@ const renderers = {
   },
 
   bullet_list_open (token) {
-    if (this._inBulletList) {
-      _bulletListItem.call(this)
+    if (this.lists.length) {
+      _listItem.call(this)
     }
-    _incLevel.call(this, '_inBulletList')
+    this.lists.push('bullet')
+  },
+
+  ordered_list_open (token) {
+    if (this.lists.length) {
+      _listItem.call(this)
+    }
+    this.lists.push('order')
   },
 
   list_item_open (token) {
@@ -207,12 +215,16 @@ const renderers = {
 
   list_item_close (token) {
     if (this.length) {
-      _bulletListItem.call(this)
+      _listItem.call(this)
     }
   },
 
+  ordered_list_close (token) {
+    this.lists.pop()
+  },
+
   bullet_list_close (token) {
-    _decLevel.call(this, '_inBulletList')
+    this.lists.pop()
   }
 }
 
@@ -230,4 +242,4 @@ function render (tokens) {
   tokens.forEach((token, index) => (renderers[token.type] || nop).call(this, token, index, tokens))
 }
 
-module.exports = (tokens, output, settings = {}) => render.call({ output, ...settings }, tokens)
+module.exports = (tokens, output, settings = {}) => render.call({ output, ...settings, lists: [] }, tokens)
