@@ -218,4 +218,25 @@ select 6
 format bullet_list 1
 right 1
 enter`, '<ul><li>item 1</li><ul><li>item 2</li><li>item 3</li></ul><li>item 4</li></ul><cursor/>')
+
+  test(20, `type A
+left 1
+select 1
+format bullet_list 1
+right 1
+enter
+type B
+left 1
+select 1
+format bullet_list 2
+right 1
+enter
+type C
+left 1
+select 1
+format bullet_list 2
+right 1
+enter
+type D
+enter`, '<ul><li>A</li><ul><li>B</li><li>C</li></ul></ul>D<br><cursor/>')
 })
