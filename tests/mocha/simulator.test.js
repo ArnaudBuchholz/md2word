@@ -239,4 +239,30 @@ right 1
 enter
 type D
 enter`, '<ul><li>A</li><ul><li>B</li><li>C</li></ul></ul>D<br><cursor/>')
+
+  test(21, `type A
+left 1
+select 1
+format order_list 1
+right 1
+enter
+type B
+left 1
+select 1
+format order_list 2
+right 1
+enter
+type C
+left 1
+select 1
+format order_list 2
+right 1
+enter
+type D
+left 1
+select 1
+format order_list 1
+enter
+type E
+enter`, '<ol><li>A</li><ol><li>B</li><li>C</li></ol><li>D</li></ol>E<br><cursor/>')
 })
