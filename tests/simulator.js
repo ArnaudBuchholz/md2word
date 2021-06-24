@@ -145,17 +145,18 @@ function html () {
     box_header: { tagName: 'div', block: true },
     box_content: { tagName: 'div', block: true },
     image: { tagName: 'img', block: true },
-    bullet_list: { tagName: 'li', block: true }
+    bullet_list: { tagName: 'li', listType: 'ul', block: true },
+    order_list: { tagName: 'li', listType: 'ol', block: true }
   }
   const result = []
   let lastFormat
-  let inBulletList = 0
+  const lists = []
   let isInFormat = 0
 
-  function closeBulletLists (level = 0) {
-    while (inBulletList > level) {
-      result.push('</ul>')
-      --inBulletList
+  function closeLists (level = 0) {
+    while (lists.length > level) {
+      const listType = lists.pop()
+      result.push(`</${listType}>`)
     }
     lastFormat = undefined
   }
@@ -169,19 +170,19 @@ function html () {
     }
     if (action === 'format-begin') {
       const { format, info } = data
-      const { tagName, block } = mappings[format]
+      const { tagName, listType, block } = mappings[format]
       ++isInFormat
       if (tagName === 'li') {
         const level = parseInt(info, 10)
-        while (inBulletList < level) {
-          ++inBulletList
-          result.push('<ul>')
+        while (lists.length < level) {
+          lists.push(listType)
+          result.push(`<${listType}>`)
         }
-        closeBulletLists(level)
+        closeLists(level)
         result.push('<li>')
       } else {
-        if (block && lastFormat === 'bullet_list') {
-          closeBulletLists()
+        if (block && ['bullet_list', 'order_list'].includes(lastFormat)) {
+          closeLists()
         }
         if (tagName === 'div') {
           result.push(`<div class="${format}">`)
@@ -207,8 +208,8 @@ function html () {
           result.push('<br>')
         } // else useless
       } else {
-        if (!isInFormat && inBulletList) {
-          closeBulletLists()
+        if (!isInFormat && lists.length) {
+          closeLists()
         }
         const end = walkPos + text.length
         if (this.pos > walkPos && this.pos < end) {
@@ -220,7 +221,7 @@ function html () {
       }
     }
   })
-  closeBulletLists()
+  closeLists()
   if (this.pos === this.length) {
     result.push(cursor)
   }
