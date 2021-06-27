@@ -1,14 +1,16 @@
 'use strict'
 
 const { dirname, isAbsolute, join } = require('path')
+const { markdownlint } = require('markdownlint').promises
 const md = require('markdown-it')()
-const { readFile } = require('fs').promises
+const { readdir, readFile } = require('fs').promises
 const renderer = require('./renderer')
 const { check, log, serve } = require('reserve')
 
-const instructions = []
-
 const mdFilename = process.argv[2]
+const lintOnly = process.argv.includes('-lintOnly')
+const serveAnyway = process.argv.includes('-serve')
+const dumpScript = process.argv.includes('-dump')
 let basePath
 
 if (isAbsolute(mdFilename)) {
@@ -17,15 +19,38 @@ if (isAbsolute(mdFilename)) {
   basePath = dirname(join(process.cwd(), mdFilename))
 }
 
-readFile(mdFilename)
-  .then(buffer => buffer.toString())
-  .then(markdown => {
-    return md.parse(markdown)
+const customRulesPath = join(__dirname, './linter')
+const instructions = []
+
+readdir(customRulesPath)
+  .then(ruleNames => {
+    const customRules = ruleNames.map(name => require(join(customRulesPath, name)))
+    return markdownlint({
+      files: [mdFilename],
+      customRules
+    })
   })
+  .then(report => {
+    const issues = report[mdFilename]
+    if (issues.length) {
+      issues.forEach(error => console.error(error))
+      if (!serveAnyway) {
+        process.exit(issues.length)
+      }
+    }
+    return readFile(mdFilename)
+  })
+  .then(buffer => buffer.toString())
+  .then(markdown => md.parse(markdown))
   .then(tokens => {
     renderer(tokens, instruction => instructions.push(instruction), { basePath })
     const script = instructions.join('\n')
-    console.log(script)
+    if (dumpScript) {
+      console.log(script)
+    }
+    if (lintOnly) {
+      process.exit(0)
+    }
     return check({
       port: 53475,
       mappings: [{
@@ -44,3 +69,4 @@ readFile(mdFilename)
   .then(configuration => {
     log(serve(configuration))
   })
+  .catch(reason => console.error(reason))
