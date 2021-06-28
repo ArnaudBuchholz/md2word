@@ -46,3 +46,17 @@ To assess that previous errors does not alter parsing
 > This is an unformatted title
 >> This is a content that can be **formatted**
 >> with any other *content*
+
+## A valid use of blockquote for caption
+
+```text
+This is some code
+```
+
+> Code description
+
+## A valid use of blockquote for image
+
+![altext](url.jpg)
+
+> Image description
