@@ -50,10 +50,14 @@ describe('linter', () => {
 
   Object.keys(expected).forEach(name => {
     describe(name, () => {
-      Object.keys(expected[name]).forEach(lineNumber => {
+      const expectedLineNumbers = Object.keys(expected[name])
+      expectedLineNumbers.forEach(lineNumber => {
         it(expected[name][lineNumber], () => {
           assert.ok(found[name][lineNumber])
         })
+      })
+      it('found the right number of errors', () => {
+        assert.strictEqual(expectedLineNumbers.length, Object.keys(found[name]).length)
       })
     })
   })
