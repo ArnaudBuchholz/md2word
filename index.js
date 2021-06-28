@@ -8,9 +8,10 @@ const renderer = require('./renderer')
 const { check, log, serve } = require('reserve')
 
 const mdFilename = process.argv[2]
+const dumpErrors = process.argv.includes('-dumpErrors')
 const lintOnly = process.argv.includes('-lintOnly')
 const serveAnyway = process.argv.includes('-serve')
-const dumpScript = process.argv.includes('-dump')
+const dumpScript = process.argv.includes('-dumpScript')
 let basePath
 
 if (isAbsolute(mdFilename)) {
@@ -33,7 +34,13 @@ readdir(customRulesPath)
   .then(report => {
     const issues = report[mdFilename]
     if (issues.length) {
-      issues.forEach(error => console.error(error))
+      issues.forEach(error => {
+        if (dumpErrors) {
+          console.error(error)
+        } else {
+          console.log(`${mdFilename}@${error.lineNumber}: ${error.errorDetail || error.ruleDescription}`)
+        }
+      })
       if (!serveAnyway) {
         process.exit(issues.length)
       }
