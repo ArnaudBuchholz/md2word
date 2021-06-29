@@ -56,8 +56,9 @@ Publishing tab. Your first option is the bullet list. Bullet lists are used
 for listing items that come in no particular order.
 
 * Bullet lists are created via the Bullet List style.
+* And they must have at least two items
 
-A second paragraph within a bulleted list is indented and gets its own style
+A second paragraph within a bulleted list is **not** indented and gets its own style
 assigned to it: Bullet List Indent. If a bullet list item is accompanied by
 a Bullet List Indent style, the main bulleted item should appear in bold
 (as it is above).
@@ -72,6 +73,7 @@ Listing style in the Listing section.
 * Some lists have sub-bullets.
   * Sub-bullets are created using the Bullet List Under style.
   * However, if you use one sub-bullet, there must always be a second (or third).
+* But a list must always have two bullets
 
 We also have the option for numbered lists. Numbered lists should be used for
 steps in a process; they imply that steps are being performed in a particular order.
