@@ -24,7 +24,9 @@ module.exports = {
   tags: ['md2word'],
   function: (params, onError) => {
     params.tokens.forEach((token, index, tokens) => {
-      if (token.type === 'fence' && token.tag === 'code') {
+      const needCaption = (token.type === 'fence' && token.tag === 'code') ||
+        token.type === 'image'
+      if (needCaption) {
         const next = tokens[index + 1]
         if (!next || next.type !== 'blockquote_open') {
           onError({
