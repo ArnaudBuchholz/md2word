@@ -19,9 +19,9 @@ function isValidCaption (tokens, from) {
 }
 
 module.exports = {
-  names: ['required-caption'],
-  description: 'Caption is required',
-  tags: ['word'],
+  names: ['md2word/caption'],
+  description: 'Caption validation',
+  tags: ['md2word'],
   function: (params, onError) => {
     params.tokens.forEach((token, index, tokens) => {
       if (token.type === 'fence' && token.tag === 'code') {
