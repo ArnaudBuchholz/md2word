@@ -45,6 +45,10 @@ describe('linter', () => {
     'missing caption in code': {
       5: 'detects missing caption for code example',
       25: 'detects formatted caption'
+    },
+    bullets: {
+      10: 'detects unique first level bullet',
+      15: 'detects unique second level bullet'
     }
   }
 
@@ -57,7 +61,15 @@ describe('linter', () => {
         })
       })
       it('found the right number of errors', () => {
-        assert.strictEqual(expectedLineNumbers.length, Object.keys(found[name]).length)
+        const lineNumbers = Object.keys(found[name])
+        if (expectedLineNumbers.length !== lineNumbers.length) {
+          lineNumbers.forEach(lineNumber => {
+            if (!expectedLineNumbers.includes(lineNumber)) {
+              console.log(found[name][lineNumber])
+            }
+          })
+        }
+        assert.strictEqual(expectedLineNumbers.length, lineNumbers.length)
       })
     })
   })
