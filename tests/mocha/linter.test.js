@@ -48,7 +48,9 @@ describe('linter', () => {
     },
     bullets: {
       10: 'detects unique first level bullet',
-      15: 'detects unique second level bullet'
+      15: 'detects unique second level bullet',
+      20: 'detects unique first level numbered bullet',
+      25: 'detects unique second level numbered bullet'
     }
   }
 
