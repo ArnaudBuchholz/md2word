@@ -44,7 +44,7 @@ module.exports = {
         if (token.type === 'blockquote_close') {
           if (state === BOX_BODY) {
             state = END_OF_BOX
-          } else if (state === END_OF_BOX) {
+          } else {
             state = 0
           }
         }
