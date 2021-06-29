@@ -14,3 +14,13 @@
 * First level
   * Second level
 * Another first level
+
+## Forbidden unique numbered bullet
+
+1. First level
+
+## Forbidden unique numbered sub bullet
+
+1. First level
+    1. Second level
+1. Another first level
