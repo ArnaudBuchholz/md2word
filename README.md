@@ -6,11 +6,18 @@ Markdown to word automation
 
 **Markdown** is easy to learn and write *(see this [guide](https://www.markdownguide.org/))*. It can be **validated** (using [markdownlint](https://www.npmjs.com/package/markdownlint)) and **automated** (using [markdown-it](https://www.npmjs.com/package/markdown-it)).
 
-Hence this is the perfect syntax to **collaborate** when writing a book.
+Hence this is the perfect syntax to **collaborate** when writing a document.
 
-However, publishers are expecting to receive a Word document.
+However, some book publishers expect to receive a Word document.
 
-This tool was created to automate the rendering of a markdown page inside a word document using styles.
+This tool was created to automate the rendering of a markdown page inside a word document using styles that can be **customized**.
+
+## Setup
+
+* To install the tool use : `npm install md2word -global`
+* To validate and serve a markdown file, simply use `md2word <md filename>`
+
+When the markdown file is served, open Word and run the `md2word` macro.
 
 ## Commands
 
@@ -24,7 +31,7 @@ For instance, the following markdown :
 This text is **bolded and *italic***, so cool !
 ````
 
-Would generate this list of instructions :
+Is translated into this list of instructions :
 ```
 text This is an example
 left 18
@@ -69,4 +76,5 @@ enter
 | box_header | <i><small>n/a</small></i> | Box header |
 | box_content | <i><small>n/a</small></i> | Box content |
 | image | <i><small>n/a</small></i> | Convert the selected path into an image path |
-| bullet_list | level (1-based) | bullet list item |
+| bullet_list | level (1-based) | * bullet list item |
+| order_list | level (1-based) | 1. order list item |
