@@ -17,7 +17,7 @@ This tool was created to automate the rendering of a markdown page inside a word
 * To install the tool use : `npm install md2word -global`
 * To validate and serve a markdown file, simply use `md2word <md filename>`
 
-When the markdown file is served, open Word and run the `md2word` macro.
+When the markdown file is served, open Word and executes the formatting macro : an example is provided [here](https://github.com/ArnaudBuchholz/md2word/blob/main/vba/md2word.bas).
 
 ## Commands
 
