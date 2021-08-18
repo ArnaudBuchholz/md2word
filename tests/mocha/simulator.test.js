@@ -265,4 +265,14 @@ format order_list 1
 enter
 type E
 enter`, '<ol><li>A</li><ol><li>B</li><li>C</li></ol><li>D</li></ol>E<br><cursor/>')
+
+  test(22, `type md2word (https://www.npmjs.com/package/md2word)
+left 47
+select 7
+format url_title
+right 3
+select 37
+format url
+right 2
+enter`, '<span class="url_title">md2word</span> (<a href="https://www.npmjs.com/package/md2word">https://www.npmjs.com/package/md2word</a>)<br><cursor/>')
 })
