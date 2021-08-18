@@ -78,3 +78,16 @@ enter
 | image | <i><small>n/a</small></i> | Convert the selected path into an image path |
 | bullet_list | level (1-based) | * bullet list item |
 | order_list | level (1-based) | 1. order list item |
+| url_title | <i><small>n/a</small></i> | url name |
+| url | <i><small>n/a</small></i> | [url](https://www.npmjs.com/package/md2word) |
+
+**NOTE** : Only URLs using the following link syntax are accepted :
+```text
+[url name](url address)
+```
+
+And are rendered like the following :
+
+```html
+url name (<a href="url address">url address</a>)
+```
