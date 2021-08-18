@@ -225,6 +225,20 @@ const renderers = {
 
   bullet_list_close (token) {
     this.lists.pop()
+  },
+
+  link_open (token) {
+    this.url = token.attrs[0][1]
+    _startInlineFormatting.call(this, 'url_title')
+  },
+
+  link_close (token) {
+    _endInlineFormatting.call(this)
+    _text.call(this, { content: ' (' })
+    _startInlineFormatting.call(this, 'url')
+    _text.call(this, { content: this.url })
+    _endInlineFormatting.call(this)
+    _text.call(this, { content: ')' })
   }
 }
 
