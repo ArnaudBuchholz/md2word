@@ -33,12 +33,12 @@
   },
   "homepage": "https://github.com/ArnaudBuchholz/md2word#readme",
   "dependencies": {
-    "markdown-it": "^12.1.0",
+    "markdown-it": "^12.2.0",
     "markdownlint": "^0.23.1",
-    "reserve": "^1.11.4"
+    "reserve": "^1.11.5"
   },
   "devDependencies": {
-    "mocha": "^9.0.2",
+    "mocha": "^9.0.3",
     "standard": "^16.0.3"
   },
   "standard": {
