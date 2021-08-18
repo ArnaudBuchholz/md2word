@@ -51,12 +51,20 @@ describe('linter', () => {
       15: 'detects unique second level bullet',
       20: 'detects unique first level numbered bullet',
       25: 'detects unique second level numbered bullet'
+    },
+    url: {
+      9: 'detects bare URL (markdownlint)',
+      13: 'detects URL title formatting'
     }
   }
 
+  let expectedErrorCount = 0
+
   Object.keys(expected).forEach(name => {
+    const expectedLineNumbers = Object.keys(expected[name])
+    expectedErrorCount += expectedLineNumbers.length
+
     describe(name, () => {
-      const expectedLineNumbers = Object.keys(expected[name])
       expectedLineNumbers.forEach(lineNumber => {
         it(expected[name][lineNumber], () => {
           assert.ok(found[name][lineNumber])
@@ -74,5 +82,10 @@ describe('linter', () => {
         assert.strictEqual(expectedLineNumbers.length, lineNumbers.length)
       })
     })
+  })
+
+  it('Checking the total error count', () => {
+    const errorsFound = Object.keys(found).reduce((total, name) => total + Object.keys(found[name]).length, 0)
+    assert.strictEqual(errorsFound, expectedErrorCount)
   })
 })
