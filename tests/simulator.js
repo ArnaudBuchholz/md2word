@@ -146,7 +146,9 @@ function html () {
     box_content: { tagName: 'div', block: true },
     image: { tagName: 'img', block: true },
     bullet_list: { tagName: 'li', listType: 'ul', block: true },
-    order_list: { tagName: 'li', listType: 'ol', block: true }
+    order_list: { tagName: 'li', listType: 'ol', block: true },
+    url_title: { tagName: 'span' },
+    url: { tagName: 'a' }
   }
   const result = []
   let lastFormat
@@ -184,9 +186,9 @@ function html () {
         if (block && ['bullet_list', 'order_list'].includes(lastFormat)) {
           closeLists()
         }
-        if (tagName === 'div') {
-          result.push(`<div class="${format}">`)
-        } else if (tagName !== 'img') {
+        if (['div', 'span'].includes(tagName)) {
+          result.push(`<${tagName} class="${format}">`)
+        } else if (!['img', 'a'].includes(tagName)) {
           result.push(`<${tagName}>`)
         }
       }
@@ -196,6 +198,9 @@ function html () {
       if (tagName === 'img') {
         const url = result.pop()
         result.push(`<img src="${url}">`)
+      } else if (tagName === 'a') {
+        const url = result.pop()
+        result.push(`<a href="${url}">${url}</a>`)
       } else {
         result.push(`</${tagName}>`)
       }
