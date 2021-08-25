@@ -99,10 +99,10 @@ lists.
 ```javascript
 // This is a javascript comment
 function div (a, b) {
-  return a / b
+  return a / b;
 }
 
-assert.strictEqual(div(1, 1), 1)
+assert.strictEqual(div(1, 1), 1);
 ```
 
 > JavaScript example
