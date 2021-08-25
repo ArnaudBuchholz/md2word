@@ -8,12 +8,14 @@ const md = require('markdown-it')()
 const { readdir, readFile } = require('fs').promises
 const renderer = require('./renderer')
 const { check, log, serve } = require('reserve')
+const customRulesPath = join(__dirname, './linter')
+const checkCode = require('./checkcode')
+const { error } = require('./report')
 
 const mdFilename = process.argv[2]
-const dumpErrors = process.argv.includes('-dumpErrors')
+const verbose = process.argv.includes('-verbose')
 const lintOnly = process.argv.includes('-lintOnly')
 const serveAnyway = process.argv.includes('-serve')
-const dumpScript = process.argv.includes('-dumpScript')
 let basePath
 
 if (isAbsolute(mdFilename)) {
@@ -21,9 +23,6 @@ if (isAbsolute(mdFilename)) {
 } else {
   basePath = dirname(join(process.cwd(), mdFilename))
 }
-
-const customRulesPath = join(__dirname, './linter')
-const instructions = []
 
 readdir(customRulesPath)
   .then(ruleNames => {
@@ -36,11 +35,10 @@ readdir(customRulesPath)
   .then(report => {
     const issues = report[mdFilename]
     if (issues.length) {
-      issues.forEach(error => {
-        if (dumpErrors) {
+      issues.forEach(issue => {
+        error(mdFilename, issue.lineNumber, issue.errorDetail || issue.ruleDescription)
+        if (verbose) {
           console.error(error)
-        } else {
-          console.log(`${mdFilename}@${error.lineNumber}: ${error.errorDetail || error.ruleDescription}`)
         }
       })
       if (!serveAnyway) {
@@ -51,14 +49,27 @@ readdir(customRulesPath)
   })
   .then(buffer => buffer.toString())
   .then(markdown => md.parse(markdown))
-  .then(tokens => {
-    renderer(tokens, instruction => instructions.push(instruction), { basePath })
-    const script = instructions.join('\n')
-    if (dumpScript) {
-      console.log(script)
+  .then(async tokens => {
+    const issues = await checkCode(basePath, tokens)
+    if (issues.length) {
+      issues.forEach(({ line, message }) => {
+        error(mdFilename, line, message)
+      })
+      if (!serveAnyway) {
+        process.exit(issues.length)
+      }
     }
+    return tokens
+  })
+  .then(tokens => {
     if (lintOnly) {
       process.exit(0)
+    }
+    const instructions = []
+    renderer(tokens, instruction => instructions.push(instruction), { basePath })
+    const script = instructions.join('\n')
+    if (verbose) {
+      console.log(script)
     }
     return check({
       port: 53475,
