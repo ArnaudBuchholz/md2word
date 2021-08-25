@@ -12,7 +12,7 @@ module.exports = async function checkCode (basePath, tokens) {
         try {
           const linter = require(join(basePath, `${language}.linter.js`))
           try {
-            const results = await linter(basePath, token.content)
+            const results = await linter(basePath, token.content) || []
             results.forEach(({ line, message }) => {
               errors.push({
                 line: line + token.map[0] + 1,
