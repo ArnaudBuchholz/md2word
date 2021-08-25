@@ -19,9 +19,36 @@ This tool was created to automate the rendering of a markdown page inside a word
 
 When the markdown file is served, open Word and executes the formatting macro : an example is provided [here](https://github.com/ArnaudBuchholz/md2word/blob/main/vba/md2word.bas).
 
+## Code linters
+
+Code linting is made possible through dedicated scripts *(not included)*.
+
+For each language that requires validation, create a file named `<language>.linter.js` in the folder containing the markdown file.
+
+The module is loaded using [`require`](https://nodejs.org/api/modules.html#modules_require_id) and it must only exports one **asynchronous** function taking two parameters :
+
+* `basePath` the folder containing the markdown file being parsed
+* `text` the code to validate
+
+The function should resolve to an array of messages containing :
+
+* `line` the line number where the message is generated *(0 based, relative to the text content)*
+* `message` the error message
+
+```javascript
+module.exports = async function (basePath, text) {
+  return [{
+    line: 0,
+    message: 'Any error'
+  }]
+}
+```
+
+An example of a javascript linter *(based on [standard](https://www.npmjs.com/package/standard))* is provided in [in the repository](https://github.com/ArnaudBuchholz/md2word/blob/main/tests/javascript.linter.js).
+
 ## Commands
 
-Basically, the markdown file is parsed and broken down into a set of **instructions**.
+Basically, the markdown file is parsed and broken down into a set of **commands**.
 
 For instance, the following markdown :
 
@@ -31,7 +58,7 @@ For instance, the following markdown :
 This text is **bolded and *italic***, so cool !
 ````
 
-Is translated into this list of instructions :
+Is translated into this list of commands :
 ```
 text This is an example
 left 18
@@ -83,11 +110,11 @@ enter
 
 **NOTE** : Only URLs using the following link syntax are accepted :
 ```text
-[url name](url address)
+[url name](url_address)
 ```
 
 And are rendered like the following :
 
 ```html
-url name (<a href="url address">url address</a>)
+url name (<a href="url_address">url address</a>)
 ```

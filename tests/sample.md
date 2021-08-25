@@ -93,3 +93,16 @@ lists.
 * And in case you need a really deeply structured list, you can even have sub-sub-bullets:
   * This is a Bullet List Under Under.
   * And another one.
+
+### Code
+
+```javascript
+// This is a javascript comment
+function div (a, b) {
+  return a / b;
+}
+
+assert.strictEqual(div(1, 1), 1);
+```
+
+> JavaScript example
