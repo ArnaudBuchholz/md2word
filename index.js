@@ -24,21 +24,29 @@ if (isAbsolute(mdFilename)) {
   basePath = dirname(join(process.cwd(), mdFilename))
 }
 
+let config
+try {
+  config = require(join(basePath, 'md2word.json'))
+} catch (e) {
+  // ignore
+}
+
 readdir(customRulesPath)
   .then(ruleNames => {
     const customRules = ruleNames.map(name => require(join(customRulesPath, name)))
     return markdownlint({
       files: [mdFilename],
-      customRules
+      customRules,
+      config
     })
   })
   .then(report => {
     const issues = report[mdFilename]
     if (issues.length) {
       issues.forEach(issue => {
-        error(mdFilename, issue.lineNumber, issue.errorDetail || issue.ruleDescription)
+        error(mdFilename, issue.lineNumber, `${issue.errorDetail || issue.ruleDescription} (${issue.ruleNames.join(', ')})`)
         if (verbose) {
-          console.error(error)
+          console.error(issue)
         }
       })
       if (!serveAnyway) {
