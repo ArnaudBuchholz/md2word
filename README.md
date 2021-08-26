@@ -19,6 +19,21 @@ This tool was created to automate the rendering of a markdown page inside a word
 
 When the markdown file is served, open Word and executes the formatting macro : an example is provided [here](https://github.com/ArnaudBuchholz/md2word/blob/main/vba/md2word.bas).
 
+## Markdown linter
+
+The [markdown linter](https://www.npmjs.com/package/markdownlint) can be tweaked with a configuration file as described [here](https://github.com/DavidAnson/markdownlint#optionsconfig).
+The file must be named `md2word.json` and be placed in the same folder than the markdown file.
+
+Example file :
+
+```json
+{
+  "default": true,
+  "MD013": false,
+  "no-hard-tabs": true
+}
+```
+
 ## Code linters
 
 Code linting is made possible through dedicated scripts *(not included)*.
