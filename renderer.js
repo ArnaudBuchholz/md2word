@@ -133,7 +133,7 @@ const renderers = {
 
   blockquote_close () {
     if (this._nextIsCaption) {
-      _format.call(this, 'caption')
+      _format.call(this, `caption ${this._nextIsCaption}`)
       delete this._nextIsCaption
     }
     if (this._inBlockQuote === 2) {
@@ -170,7 +170,7 @@ const renderers = {
     this.text = [token.content.trim()]
     _format.call(this, `code ${token.info}`)
     _reset.call(this)
-    this._nextIsCaption = true
+    this._nextIsCaption = 'code'
   },
 
   image (token) {
@@ -187,7 +187,7 @@ const renderers = {
     this.text = [src]
     _format.call(this, 'image')
     _reset.call(this)
-    this._nextIsCaption = true
+    this._nextIsCaption = 'image'
   },
 
   code_inline (token) {
