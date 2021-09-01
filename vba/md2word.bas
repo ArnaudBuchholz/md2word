@@ -18,7 +18,7 @@ Private Sub dispatch(instruction)
     count = 0
     For Each line In Split(parameter, "%N")
       If count > 0 Then
-        Selection.TypeText text:=Chr(11)
+        Selection.TypeText text:=" "
       End If
       Selection.TypeText text:=Replace(line, "%%", "%")
       count = count + 1
@@ -50,6 +50,8 @@ Private Sub dispatch(instruction)
     ElseIf InStr(1, parameter, "code ") = 1 Then
       Selection.Font.Name = "Courier New"
       Selection.Font.Size = 8
+    ElseIf InStr(1, parameter, "caption ") = 1 Then
+      style = "caption"
     ElseIf parameter = "image" Then
       Dim filename
       filename = Selection.text
