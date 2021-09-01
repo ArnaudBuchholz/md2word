@@ -81,7 +81,7 @@ const actions = {
       throw new Error('type allowed only at the end of the flow')
     }
     delete this.selectFrom
-    const unescaped = text.replace(/%N/g, '\n').replace(/%%/g, '%')
+    const unescaped = text.replace(/%N/g, ' ').replace(/%%/g, '%')
     this.blocks.push(unescaped)
     this.pos += unescaped.length
     this.length += unescaped.length
