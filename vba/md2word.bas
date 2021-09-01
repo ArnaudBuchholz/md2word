@@ -50,6 +50,8 @@ Private Sub dispatch(instruction)
     ElseIf InStr(1, parameter, "code ") = 1 Then
       Selection.Font.Name = "Courier New"
       Selection.Font.Size = 8
+    ElseIf InStr(1, parameter, "caption ") = 1 Then
+      style = "caption"
     ElseIf parameter = "image" Then
       Dim filename
       filename = Selection.text

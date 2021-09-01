@@ -113,13 +113,15 @@ enter
 | italic | <i><small>n/a</small></i> | *italic* |
 | underline | <i><small>n/a</small></i> | <u>underline</u> |
 | code | language | <code>code</code> |
-| caption | <i><small>n/a</small></i> | <figcaption>code or figure caption</figcaption> |
+| caption | code / image | <figcaption>code or image caption</figcaption> |
 | inline_code | <i><small>n/a</small></i> | <samp>inline code</samp> |
 | box_header | <i><small>n/a</small></i> | Box header |
 | box_content | <i><small>n/a</small></i> | Box content |
 | image | <i><small>n/a</small></i> | Convert the selected path into an image path |
 | bullet_list | level (1-based) | * bullet list item |
 | order_list | level (1-based) | 1. order list item |
+| box_bullet_list | level (1-based) | * bullet list item (in a box) |
+| box_order_list | level (1-based) | 1. order list item (in a box) |
 | url_title | <i><small>n/a</small></i> | url name |
 | url | <i><small>n/a</small></i> | [url](https://www.npmjs.com/package/md2word) |
 

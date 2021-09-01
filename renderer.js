@@ -44,7 +44,7 @@ function _format (format) {
 }
 
 function _paragraph (wrapper) {
-  const text = this.text.map(t => t === softbreak ? '%N' : t.replace(/%/g, '%%')).join('')
+  const text = this.text.map(t => t === softbreak ? ' ' : t.replace(/%/g, '%%')).join('')
   this.output(`type ${text}`)
   const length = this.length
   if (wrapper) {
@@ -97,7 +97,11 @@ function _listItem () {
     this.output(`left ${length}`)
     this.output(`select ${length}`)
     const type = this.lists[this.lists.length - 1]
-    this.output(`format ${type}_list ${this.lists.length}`)
+    if (this._inBlockQuote === 2) {
+      this.output(`format box_${type}_list ${this.lists.length}`)
+    } else {
+      this.output(`format ${type}_list ${this.lists.length}`)
+    }
     this.output('right 1')
   })
   this.output('enter')
@@ -133,17 +137,8 @@ const renderers = {
 
   blockquote_close () {
     if (this._nextIsCaption) {
-      _format.call(this, 'caption')
+      _format.call(this, `caption ${this._nextIsCaption}`)
       delete this._nextIsCaption
-    }
-    if (this._inBlockQuote === 2) {
-      _paragraph.call(this, length => {
-        this.output(`left ${length}`)
-        this.output(`select ${length}`)
-        this.output('format box_content')
-        this.output('right 1')
-      })
-      this.output('enter')
     }
     _decLevel.call(this, '_inBlockQuote')
   },
@@ -158,10 +153,19 @@ const renderers = {
   },
 
   paragraph_close () {
-    if ((this.text.length === 1 && this.text[0] === softbreak) || this._inBlockQuote || this.lists.length) {
+    if ((this.text.length === 1 && this.text[0] === softbreak) || this._inBlockQuote === 1 || this.lists.length) {
       return // ignore
     }
-    _paragraph.call(this)
+    if (this._inBlockQuote === 2) {
+      _paragraph.call(this, length => {
+        this.output(`left ${length}`)
+        this.output(`select ${length}`)
+        this.output('format box_content')
+        this.output('right 1')
+      })
+    } else {
+      _paragraph.call(this)
+    }
     this.output('enter')
   },
 
@@ -170,7 +174,7 @@ const renderers = {
     this.text = [token.content.trim()]
     _format.call(this, `code ${token.info}`)
     _reset.call(this)
-    this._nextIsCaption = true
+    this._nextIsCaption = 'code'
   },
 
   image (token) {
@@ -187,7 +191,7 @@ const renderers = {
     this.text = [src]
     _format.call(this, 'image')
     _reset.call(this)
-    this._nextIsCaption = true
+    this._nextIsCaption = 'image'
   },
 
   code_inline (token) {
