@@ -45,14 +45,27 @@ div.box_header {
   width: 80%;
   padding: .25rem;
   border: solid 1px black;
-  border-bottom: unset;
-  background-color: silver;
+  background-color: #d0d0d0;
 }
 
 div.box_content {
   width: 80%;
   padding: .25rem;
-  border: solid 1px black;
+  background-color: #e0e0e0;
+}
+
+ul.box {
+  margin: 0;
+  width: 77%;
+  padding-left: 5%;
+  background-color: #e0e0e0;
+}
+
+ol.box {
+  margin: 0;
+  width: 77%;
+  padding-left: 5%;
+  background-color: #e0e0e0;
 }
 
 div.container {
@@ -117,6 +130,7 @@ async function onRender () {
   const markdown = document.getElementById('markdown').value
   location.hash = encodeURI(markdown)
   const tokens = await md.parse(markdown)
+  console.log(tokens)
   renderer(tokens, instruction => {
     console.log(instruction)
     instructions.push(instruction)
