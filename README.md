@@ -120,6 +120,8 @@ enter
 | image | <i><small>n/a</small></i> | Convert the selected path into an image path |
 | bullet_list | level (1-based) | * bullet list item |
 | order_list | level (1-based) | 1. order list item |
+| box_bullet_list | level (1-based) | * bullet list item (in a box) |
+| box_order_list | level (1-based) | 1. order list item (in a box) |
 | url_title | <i><small>n/a</small></i> | url name |
 | url | <i><small>n/a</small></i> | [url](https://www.npmjs.com/package/md2word) |
 
