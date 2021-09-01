@@ -18,7 +18,7 @@ Private Sub dispatch(instruction)
     count = 0
     For Each line In Split(parameter, "%N")
       If count > 0 Then
-        Selection.TypeText text:=" "
+        Selection.TypeText text:=Chr(11)
       End If
       Selection.TypeText text:=Replace(line, "%%", "%")
       count = count + 1
