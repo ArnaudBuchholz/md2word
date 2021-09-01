@@ -94,6 +94,14 @@ lists.
   * This is a Bullet List Under Under.
   * And another one.
 
+> About list in boxes
+>> It is possible to use list in boxes
+>>
+>> * Same constraint apply
+>> * Formatting is using box_ prefixed style
+>>
+>> Last line of the box
+
 ### Code
 
 ```javascript
