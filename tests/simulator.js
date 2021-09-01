@@ -81,7 +81,7 @@ const actions = {
       throw new Error('type allowed only at the end of the flow')
     }
     delete this.selectFrom
-    const unescaped = text.replace(/%N/g, ' ').replace(/%%/g, '%')
+    const unescaped = text.replace(/%N/g, '\n').replace(/%%/g, '%')
     this.blocks.push(unescaped)
     this.pos += unescaped.length
     this.length += unescaped.length
@@ -147,6 +147,8 @@ function html () {
     image: { tagName: 'img', block: true },
     bullet_list: { tagName: 'li', listType: 'ul', block: true },
     order_list: { tagName: 'li', listType: 'ol', block: true },
+    box_bullet_list: { tagName: 'li', listType: 'ul', className: 'box', block: true },
+    box_order_list: { tagName: 'li', listType: 'ol', className: 'box', block: true },
     url_title: { tagName: 'span' },
     url: { tagName: 'a' }
   }
@@ -172,18 +174,22 @@ function html () {
     }
     if (action === 'format-begin') {
       const { format, info } = data
-      const { tagName, listType, block } = mappings[format]
+      const { tagName, listType, block, className } = mappings[format]
       ++isInFormat
       if (tagName === 'li') {
         const level = parseInt(info, 10)
         while (lists.length < level) {
           lists.push(listType)
-          result.push(`<${listType}>`)
+          if (className) {
+            result.push(`<${listType} class="${className}">`)
+          } else {
+            result.push(`<${listType}>`)
+          }
         }
         closeLists(level)
         result.push('<li>')
       } else {
-        if (block && ['bullet_list', 'order_list'].includes(lastFormat)) {
+        if (block && ['bullet_list', 'order_list', 'box_bullet_list', 'box_order_list'].includes(lastFormat)) {
           closeLists()
         }
         if (['div', 'span'].includes(tagName)) {
