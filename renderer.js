@@ -141,7 +141,6 @@ const renderers = {
       delete this._nextIsCaption
     }
     _decLevel.call(this, '_inBlockQuote')
-    }
   },
 
   paragraph_open () {
@@ -157,7 +156,7 @@ const renderers = {
     if ((this.text.length === 1 && this.text[0] === softbreak) || this._inBlockQuote === 1 || this.lists.length) {
       return // ignore
     }
-    if (this._inBox) {
+    if (this._inBlockQuote === 2) {
       _paragraph.call(this, length => {
         this.output(`left ${length}`)
         this.output(`select ${length}`)
