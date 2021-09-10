@@ -139,28 +139,26 @@ url name (<a href="url_address">url address</a>)
 
 ### Cross references
 
-The following keywords are automatically converted into cross references based on captions.
+The following tokens are automatically converted into cross references based on captions.
 
-* `<<NEXT_CODE>>` references the next immediate code
-* `<<PREVIOUS_CODE>>` references the previous immediate code
-* `<<CODE_id>>` references the code flagged with `id`
-* `<<NEXT_IMAGE>>` references the next immediate image
-* `<<PREVIOUS_IMAGE>>` references the previous immediate image
-* `<<IMAGE_id>> references the image flagged with `id`
+* `<<xref:NEXT>>` references the next immediate code or image
+* `<<xref:PREVIOUS>>` references the previous immediate code or image
+* `<<xref:id>>` references the code or image flagged with `id`
 
-The id can be set directly in the caption using `<<@id>>`
+The id can be set directly in the caption using `<<xref:id>>`
 
 For example :
 ```text
 ![](wrong.png)
 
-> <<IMAGE_WRONG_EXAMPLE>> Wrong example
+> <<xref:IMAGE_WRONG_EXAMPLE>> Wrong example
 
-The <<NEXT_IMAGE>> is a good example.
+The <<xref:PREVIOUS>> is a bad example.
+The <<xref:NEXT>> is a good example.
 
 ![](good.png)
 
 > Good example
 
-If you compare the <<PREVIOUS_IMAGE>> with the <<IMAGE_WRONG_EXAMPLE>>, the situation is clear.
+If you compare the <<xref:PREVIOUS>> with the <<xref:IMAGE_WRONG_EXAMPLE>>, the situation is clear.
 ```
