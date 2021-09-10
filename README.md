@@ -124,6 +124,7 @@ enter
 | box_order_list | level (1-based) | 1. order list item (in a box) |
 | url_title | <i><small>n/a</small></i> | url name |
 | url | <i><small>n/a</small></i> | [url](https://www.npmjs.com/package/md2word) |
+| xref | text code/image index | Replace the occurrences of text with a cross reference to the code or image |
 
 **NOTE** : Only URLs using the following link syntax are accepted :
 ```text
@@ -134,4 +135,32 @@ And are rendered like the following :
 
 ```html
 url name (<a href="url_address">url address</a>)
+```
+
+### Cross references
+
+The following keywords are automatically converted into cross references based on captions.
+
+* `<<NEXT_CODE>>` references the next immediate code
+* `<<PREVIOUS_CODE>>` references the previous immediate code
+* `<<CODE_id>>` references the code flagged with `id`
+* `<<NEXT_IMAGE>>` references the next immediate image
+* `<<PREVIOUS_IMAGE>>` references the previous immediate image
+* `<<IMAGE_id>> references the image flagged with `id`
+
+The id can be set directly in the caption using `<<@id>>`
+
+For example :
+```text
+![](wrong.png)
+
+> <<IMAGE_WRONG_EXAMPLE>> Wrong example
+
+The <<NEXT_IMAGE>> is a good example.
+
+![](good.png)
+
+> Good example
+
+If you compare the <<PREVIOUS_IMAGE>> with the <<IMAGE_WRONG_EXAMPLE>>, the situation is clear.
 ```
