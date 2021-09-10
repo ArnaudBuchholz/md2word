@@ -104,6 +104,8 @@ lists.
 
 ### Code
 
+The <<NEXT_CODE>> is a JavaScript example
+
 ```javascript
 // This is a javascript comment
 function div (a, b) {
@@ -114,5 +116,3 @@ assert.strictEqual(div(1, 1), 1);
 ```
 
 > JavaScript example
-
-This is a very long line that goes way beyond the expected eighty characters. It is done on purpose to enable rule configuration.
