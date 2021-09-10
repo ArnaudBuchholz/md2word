@@ -104,7 +104,7 @@ lists.
 
 ### Code
 
-The <<NEXT_CODE>> is a JavaScript example
+The {{xref:NEXT}} is a JavaScript example
 
 ```javascript
 // This is a javascript comment
@@ -115,4 +115,7 @@ function div (a, b) {
 assert.strictEqual(div(1, 1), 1);
 ```
 
-> JavaScript example
+> {{xref:JS_SAMPLE}} JavaScript example
+
+The {{xref:PREVIOUS}} can also be referenced **after** it was used.
+Or it can be referenced in any part in the document, as shown in {{xref:JS_SAMPLE}}
