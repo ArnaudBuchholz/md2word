@@ -137,28 +137,48 @@ And are rendered like the following :
 url name (<a href="url_address">url address</a>)
 ```
 
+## Special syntaxes
+
+### Boxes
+
+A box is defined by a title and its content.
+The title is introduced with a blockquote (must be an unformatted one liner) and the content with an additional blockquote.
+
+```text
+> This is the box title
+>> This is the box **content**. It may contain :
+>>
+>> * Formatting
+>> * Bullet lists
+```
+
+> Example of a box
+
 ### Cross references
 
-The following tokens are automatically converted into cross references based on captions.
+The following tokens are automatically converted into cross references to captions.
 
-* `<<xref:NEXT>>` references the next immediate code or image
-* `<<xref:PREVIOUS>>` references the previous immediate code or image
-* `<<xref:id>>` references the code or image flagged with `id`
+* `{{xref:NEXT}}` references the next immediate code or image
+* `{{xref:PREVIOUS}}` references the previous immediate code or image
+* `{{xref:id}}` references the code or image flagged with `id`
 
-The id can be set directly in the caption using `<<xref:id>>`
+The id can be set directly in the caption using `{{xref:id}}`
 
 For example :
 ```text
-![](wrong.png)
+The {{xref:NEXT}} is a JavaScript example
 
-> <<xref:IMAGE_WRONG_EXAMPLE>> Wrong example
+```javascript
+// This is a javascript comment
+function div (a, b) {
+  return a / b;
+}
 
-The <<xref:PREVIOUS>> is a bad example.
-The <<xref:NEXT>> is a good example.
+assert.strictEqual(div(1, 1), 1);
+\```
 
-![](good.png)
+> {{xref:JS_SAMPLE}} JavaScript example
 
-> Good example
-
-If you compare the <<xref:PREVIOUS>> with the <<xref:IMAGE_WRONG_EXAMPLE>>, the situation is clear.
+The {{xref:PREVIOUS}} can also be referenced **after** it was used.
+Or it can be referenced **anywhere** in the document, as shown in {{xref:JS_SAMPLE}}.
 ```
