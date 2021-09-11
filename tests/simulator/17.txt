@@ -1,0 +1,15 @@
+type item 1
+left 6
+select 6
+format bullet_list 1
+enter
+type item 2
+left 6
+select 6
+format bullet_list 1
+enter
+type title
+left 5
+select 5
+format header1
+enter

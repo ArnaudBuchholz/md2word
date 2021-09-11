@@ -1,0 +1,14 @@
+type Chapter 1
+left 9
+select 9
+format header1
+enter
+type Hello World
+left 5
+select 5
+format bold
+left 1
+right 2
+select 2
+format italic
+right 1
