@@ -70,7 +70,7 @@ module.exports = {
       }
       return dictionary
     }, {})
-    xrefs.forEach(({ token, data, id })=> {
+    xrefs.forEach(({ token, data, id }) => {
       if (!id && !xrefIds[data]) {
         onError({
           lineNumber: token.lineNumber,
