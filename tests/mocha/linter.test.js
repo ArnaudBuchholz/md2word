@@ -55,6 +55,15 @@ describe('linter', () => {
     url: {
       9: 'detects bare URL (markdownlint)',
       13: 'detects URL title formatting'
+    },
+    xref: {
+      23: 'detects invalid xref id',
+      24: 'detects invalid xref id',
+      25: 'detects invalid xref id',
+      26: 'detects invalid xref id',
+      30: 'detects unknown xref id',
+      32: 'detects xref in a box title',
+      35: 'detects xref in a header'
     }
   }
 
