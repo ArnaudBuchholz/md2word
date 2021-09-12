@@ -156,6 +156,10 @@ function html () {
   let lastFormat
   const lists = []
   let isInFormat = 0
+  const indexes = {
+    code: 0,
+    image: 0
+  }
 
   function closeLists (level = 0) {
     while (lists.length > level) {
@@ -192,10 +196,17 @@ function html () {
         if (block && ['bullet_list', 'order_list', 'box_bullet_list', 'box_order_list'].includes(lastFormat)) {
           closeLists()
         }
+        if (format === 'caption') {
+          result.push(`<a name="${info}_${++indexes[info]}"></a>`)
+        }
         if (['div', 'span'].includes(tagName)) {
           result.push(`<${tagName} class="${format}">`)
         } else if (!['img', 'a'].includes(tagName)) {
           result.push(`<${tagName}>`)
+        }
+        if (format === 'caption') {
+          const label = info.charAt(0).toUpperCase() + info.substring(1) + ' ' + indexes[info]
+          result.push(label + ' : ')
         }
       }
     } else if (action === 'format-end') {
