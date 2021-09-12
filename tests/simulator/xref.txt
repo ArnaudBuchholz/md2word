@@ -1,0 +1,12 @@
+type This an example of xref as shown in {{1234567890}}
+enter
+type alert('Hello World')
+left 20
+select 20
+format code javascript
+enter
+type Example
+left 7
+select 7
+format caption code
+enter
