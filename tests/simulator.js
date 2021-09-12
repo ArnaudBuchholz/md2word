@@ -125,6 +125,13 @@ const actions = {
 
   format: applyFormat,
 
+  xref (specifier) {
+    const [, xref, type, index] = specifier.match(/([^ ]+) (code|image) (\d+)/)
+    const label = type.charAt(0).toUpperCase() + type.substring(1) + ' ' + index
+    const name = `${type}_${index}`
+    this.xrefs[xref] = { label, name }
+  },
+
   debug () { debugger } // eslint-disable-line
 }
 
@@ -238,7 +245,14 @@ function html () {
           const relPos = this.pos - walkPos
           result.push(text.substring(0, relPos), cursor, text.substring(relPos))
         } else {
-          result.push(text)
+          let textWithXref = text
+          Object.keys(this.xrefs).forEach(xref => {
+            if (text.includes(xref)) {
+              const { label, name } = this.xrefs[xref]
+              textWithXref = textWithXref.replace(xref, `<a href="#${name}">${label}</a>`)
+            }
+          })
+          result.push(textWithXref)
         }
       }
     }
@@ -254,7 +268,8 @@ module.exports = commands => {
   const context = {
     blocks: [],
     pos: 0,
-    length: 0
+    length: 0,
+    xrefs: {}
   }
   commands
     .split(/\r?\n/)
