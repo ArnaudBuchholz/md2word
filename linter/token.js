@@ -9,25 +9,38 @@ module.exports = {
     const xrefs = []
     let inHeading = false
     let inBlock = 0
+    let possibleCaption = false
+    let atLeastOneCaption = false
+    const xrefNextTokens = []
     const check = token => {
       if (token.type === 'heading_open') {
         inHeading = true
       } else if (token.type === 'heading_close') {
         inHeading = false
       } else if (token.type === 'blockquote_open') {
-        if (++inBlock === 2 && xrefs[0]?.pending) {
-          const xrefToken = xrefs[0].token
-          onError({
-            lineNumber: xrefToken.lineNumber,
-            detail: 'Invalid use of xref (in box header)',
-            context: xrefToken.line
-          })
-          xrefs.shift()
+        if (++inBlock === 2) {
+          if (xrefs[0]?.possibleBoxHeader) {
+            const xrefToken = xrefs[0].token
+            onError({
+              lineNumber: xrefToken.lineNumber,
+              detail: 'Invalid use of xref (in box header)',
+              context: xrefToken.line
+            })
+            xrefs.shift()
+          }
+        } else {
+          possibleCaption = true
         }
       } else if (token.type === 'blockquote_close') {
-        if (--inBlock === 0 && xrefs[0]?.pending) {
-          xrefs[0].pending = false
-          xrefs[0].id = true
+        if (--inBlock === 0) {
+          if (xrefs[0]?.possibleBoxHeader) {
+            delete xrefs[0].possibleBoxHeader
+            xrefs[0].id = true
+          }
+          if (possibleCaption) {
+            atLeastOneCaption = true
+            xrefNextTokens.length = 0
+          }
         }
       } else if (token.type === 'text') {
         token.content.replace(reToken, (match, type, data) => {
@@ -46,7 +59,17 @@ module.exports = {
             })
             return
           }
-          if (!['NEXT', 'PREVIOUS'].includes(data)) {
+          if (data === 'PREVIOUS') {
+            if (!atLeastOneCaption) {
+              onError({
+                lineNumber: token.lineNumber,
+                detail: 'Invalid xref (no PREVIOUS)',
+                context: token.line
+              })
+            }
+          } else if (data === 'NEXT') {
+            xrefNextTokens.push(token)
+          } else {
             if (!data || !data.match(reXrefData)) {
               onError({
                 lineNumber: token.lineNumber,
@@ -54,7 +77,7 @@ module.exports = {
                 context: token.line
               })
             }
-            xrefs.unshift({ token, data, pending: inBlock === 1 })
+            xrefs.unshift({ token, data, possibleBoxHeader: inBlock === 1 })
           }
         })
       }
@@ -63,7 +86,13 @@ module.exports = {
       }
     }
     params.tokens.forEach(check)
-
+    xrefNextTokens.forEach(token => {
+      onError({
+        lineNumber: token.lineNumber,
+        detail: 'Unknown xref (no NEXT)',
+        context: token.line
+      })
+    })
     const xrefIds = xrefs.reduce((dictionary, xref) => {
       if (xref.id) {
         dictionary[xref.data] = true
