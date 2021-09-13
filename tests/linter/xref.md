@@ -41,3 +41,5 @@ Pointing to a non existing xref should be an error : {{xref:NOT_EXISTING}}
 ### Final edge case
 
 This {{xref:NEXT}} does not exist
+
+This {{xref:NEXT}} also does not exist
