@@ -1,5 +1,9 @@
 # XREF tokens
 
+## Edge case
+
+This {{xref:PREVIOUS}} does not exist
+
 ## Valid use case
 
 The {{xref:NEXT}} is a JavaScript example
@@ -33,3 +37,7 @@ Pointing to a non existing xref should be an error : {{xref:NOT_EXISTING}}
 >> Because this is a box (where it is {{xref:JS_SAMPLE}})
 
 ### In a subtitle {{xref:NOT_HERE}}
+
+### Final edge case
+
+This {{xref:NEXT}} does not exist
