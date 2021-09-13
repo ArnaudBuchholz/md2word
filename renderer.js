@@ -26,7 +26,18 @@ function _endInlineFormatting () {
   this.stylesToApply.unshift(style)
 }
 
+const reXrefToken = /\{\{xref:([a-z0-9_]+)\}\}/g
+
 function _text ({ content }) {
+  content = content.replace(reXrefToken, (match, id) => {
+    ++this.uid
+    const textToReplace = `{{${this.uid.toString(16).padStart(8, '0')}}}`
+    this.xrefs.push({
+      textToReplace,
+      id
+    })
+    return textToReplace
+  })
   this.text.push(content)
   this.length += content.length
 }
@@ -260,4 +271,4 @@ function render (tokens) {
   tokens.forEach((token, index) => (renderers[token.type] || nop).call(this, token, index, tokens))
 }
 
-module.exports = (tokens, output, settings = {}) => render.call({ output, ...settings, lists: [] }, tokens)
+module.exports = (tokens, output, settings = {}) => render.call({ output, ...settings, lists: [], xrefs: [], uid: 0 }, tokens)
