@@ -57,13 +57,15 @@ describe('linter', () => {
       13: 'detects URL title formatting'
     },
     xref: {
-      23: 'detects invalid xref id',
-      24: 'detects invalid xref id',
-      25: 'detects invalid xref id',
-      26: 'detects invalid xref id',
-      30: 'detects unknown xref id',
-      32: 'detects xref in a box title',
-      35: 'detects xref in a header'
+      5: 'detects invalid xref (no PREVIOUS)',
+      27: 'detects invalid xref id',
+      28: 'detects invalid xref id',
+      29: 'detects invalid xref id',
+      30: 'detects invalid xref id',
+      34: 'detects unknown xref id',
+      36: 'detects xref in a box title',
+      39: 'detects xref in a header',
+      43: 'detects invalid xref (no NEXT)'
     }
   }
 
