@@ -65,7 +65,8 @@ describe('linter', () => {
       34: 'detects unknown xref id',
       36: 'detects xref in a box title',
       39: 'detects xref in a header',
-      43: 'detects invalid xref (no NEXT)'
+      43: 'detects invalid xref (no NEXT)',
+      45: 'detects invalid xref (no NEXT)'
     }
   }
 
