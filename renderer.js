@@ -26,20 +26,47 @@ function _endInlineFormatting () {
   this.stylesToApply.unshift(style)
 }
 
-const reXrefToken = /\{\{xref:([a-z0-9_]+)\}\}/g
+const reXrefToken = /\{\{xref:([a-z0-9_]+)\}\}/ig
 
-function _text ({ content }) {
-  content = content.replace(reXrefToken, (match, id) => {
+function _processTokens (text) {
+  return text.replace(reXrefToken, (match, id) => {
     ++this.uid
-    const textToReplace = `{{${this.uid.toString(16).padStart(8, '0')}}}`
-    this.xrefs.push({
-      textToReplace,
-      id
-    })
+    const textToReplace = `{{xref#${this.uid.toString(16)}}}`
+    if (id.toLowerCase() === 'previous') {
+      this.xrefs.push({
+        textToReplace,
+        ...this.lastCaption
+      })
+    } else {
+      this.xrefs.push({
+        textToReplace,
+        id
+      })
+    }
     return textToReplace
   })
-  this.text.push(content)
-  this.length += content.length
+}
+
+function _caption (type) {
+  const index = ++(this.indexes[type])
+  this.lastCaption = {
+    type,
+    index
+  }
+  this.xrefs.forEach(xref => {
+    if (xref.id.toLowerCase() === 'next') {
+      delete xref.id
+      xref.type = type
+      xref.index = index
+    }
+  })
+  _format.call(this, `caption ${type}`)
+}
+
+function _text ({ content }) {
+  const text = _processTokens.call(this, content)
+  this.text.push(text)
+  this.length += text.length
 }
 
 function _format (format) {
@@ -148,7 +175,7 @@ const renderers = {
 
   blockquote_close () {
     if (this._nextIsCaption) {
-      _format.call(this, `caption ${this._nextIsCaption}`)
+      _caption.call(this, this._nextIsCaption)
       delete this._nextIsCaption
     }
     _decLevel.call(this, '_inBlockQuote')
@@ -271,4 +298,21 @@ function render (tokens) {
   tokens.forEach((token, index) => (renderers[token.type] || nop).call(this, token, index, tokens))
 }
 
-module.exports = (tokens, output, settings = {}) => render.call({ output, ...settings, lists: [], xrefs: [], uid: 0 }, tokens)
+module.exports = (tokens, output, settings = {}) => {
+  const context = {
+    output,
+    ...settings,
+    lists: [],
+    xrefs: [],
+    uid: 0,
+    indexes: {
+      code: 0,
+      image: 0
+    },
+    lastCaption: null
+  }
+  render.call(context, tokens)
+  context.xrefs.forEach(({ textToReplace, type, index }) => {
+    output(`xref ${textToReplace} ${type} ${index}`)
+  })
+}
