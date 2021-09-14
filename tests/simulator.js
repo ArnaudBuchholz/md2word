@@ -163,10 +163,6 @@ function html () {
   let lastFormat
   const lists = []
   let isInFormat = 0
-  const indexes = {
-    code: 0,
-    image: 0
-  }
 
   function closeLists (level = 0) {
     while (lists.length > level) {
@@ -204,7 +200,8 @@ function html () {
           closeLists()
         }
         if (format === 'caption') {
-          result.push(`<a name="${info}_${++indexes[info]}"></a>`)
+          const [type, index] = info.split(' ')
+          result.push(`<a name="${type}_${index}"></a>`)
         }
         if (['div', 'span'].includes(tagName)) {
           result.push(`<${tagName} class="${format}">`)
@@ -212,7 +209,8 @@ function html () {
           result.push(`<${tagName}>`)
         }
         if (format === 'caption') {
-          const label = info.charAt(0).toUpperCase() + info.substring(1) + ' ' + indexes[info]
+          const [type, index] = info.split(' ')
+          const label = type.charAt(0).toUpperCase() + type.substring(1) + ' ' + index
           result.push(label + ' : ')
         }
       }
