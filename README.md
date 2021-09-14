@@ -113,7 +113,7 @@ enter
 | italic | <i><small>n/a</small></i> | *italic* |
 | underline | <i><small>n/a</small></i> | <u>underline</u> |
 | code | language | <code>code</code> |
-| caption | code/image | <figcaption>code or image caption</figcaption> |
+| caption | code/image index | <figcaption>code or image caption</figcaption> (index is 1-based) |
 | inline_code | <i><small>n/a</small></i> | <samp>inline code</samp> |
 | box_header | <i><small>n/a</small></i> | Box header |
 | box_content | <i><small>n/a</small></i> | Box content |
