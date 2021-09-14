@@ -7,7 +7,7 @@ const nop = token => console.log(token) // () => {}
 const softbreak = Symbol('softbreak')
 
 function _reset () {
-  this.text = []
+  this.texts = []
   this.length = 0
   this.stylesInProgress = []
   this.stylesToApply = []
@@ -65,12 +65,12 @@ function _caption (type) {
 
 function _text ({ content }) {
   const text = _processTokens.call(this, content)
-  this.text.push(text)
+  this.texts.push(text)
   this.length += text.length
 }
 
 function _format (format) {
-  const text = this.text.map(t => t === softbreak ? '\n' : t).join('')
+  const text = this.texts.map(t => t === softbreak ? '\n' : t).join('')
   const escaped = text
     .replace(/%/g, '%%')
     .replace(/\r?\n/g, '%N')
@@ -82,7 +82,7 @@ function _format (format) {
 }
 
 function _paragraph (wrapper) {
-  const text = this.text.map(t => t === softbreak ? ' ' : t.replace(/%/g, '%%')).join('')
+  const text = this.texts.map(t => t === softbreak ? ' ' : t.replace(/%/g, '%%')).join('')
   this.output(`type ${text}`)
   const length = this.length
   if (wrapper) {
@@ -186,12 +186,12 @@ const renderers = {
   },
 
   softbreak () {
-    this.text.push(softbreak)
+    this.texts.push(softbreak)
     ++this.length
   },
 
   paragraph_close () {
-    if ((this.text.length === 1 && this.text[0] === softbreak) || this._inBlockQuote === 1 || this.lists.length) {
+    if ((this.texts.length === 1 && this.texts[0] === softbreak) || this._inBlockQuote === 1 || this.lists.length) {
       return // ignore
     }
     if (this._inBlockQuote === 2) {
@@ -209,7 +209,7 @@ const renderers = {
 
   fence (token) {
     _reset.call(this)
-    this.text = [token.content.trim()]
+    this.texts = [token.content.trim()]
     _format.call(this, `code ${token.info}`)
     _reset.call(this)
     this._nextIsCaption = 'code'
@@ -226,7 +226,7 @@ const renderers = {
     if (this.basePath) {
       src = join(this.basePath, src)
     }
-    this.text = [src]
+    this.texts = [src]
     _format.call(this, 'image')
     _reset.call(this)
     this._nextIsCaption = 'image'
