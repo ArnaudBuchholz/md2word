@@ -124,7 +124,7 @@ enter
 | box_order_list | level (1-based) | 1. order list item (in a box) |
 | url_title | <i><small>n/a</small></i> | url name |
 | url | <i><small>n/a</small></i> | [url](https://www.npmjs.com/package/md2word) |
-| xref | text code/image index | Replace the occurrences of text with a cross reference to the code or image |
+| xref | text code/image index | Replace the occurrences of text with a cross reference to the code or image (index is 1-based) |
 
 **NOTE** : Only URLs using the following link syntax are accepted :
 ```text
