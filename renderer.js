@@ -7,7 +7,7 @@ const nop = token => console.log(token) // () => {}
 const softbreak = Symbol('softbreak')
 
 function _reset () {
-  this.text = []
+  this.texts = []
   this.length = 0
   this.stylesInProgress = []
   this.stylesToApply = []
@@ -26,13 +26,62 @@ function _endInlineFormatting () {
   this.stylesToApply.unshift(style)
 }
 
+const reXrefToken = /\{\{xref:([a-z0-9_]+)\}\}/ig
+
+function _processTokens (text) {
+  return text.replace(reXrefToken, (match, id) => {
+    ++this.uid
+    const textToReplace = `{{xref#${this.uid.toString(16)}}}`
+    if (id.toLowerCase() === 'previous') {
+      this.xrefs.push({
+        textToReplace,
+        ...this.lastCaption
+      })
+    } else {
+      this.xrefs.push({
+        textToReplace,
+        id
+      })
+    }
+    return textToReplace
+  })
+}
+
+function _caption (type) {
+  const index = ++(this.indexes[type])
+  this.lastCaption = {
+    type,
+    index
+  }
+  this.xrefs
+    .filter(({ id, textToReplace }) => id && textToReplace)
+    .forEach(xref => {
+      if (xref.id.toLowerCase() === 'next') {
+        delete xref.id
+      } else {
+        delete xref.textToReplace
+      }
+      Object.assign(xref, this.lastCaption)
+    })
+  // Assuming only one text exists, xref token is already replaced
+  const text = this.texts[0]
+  const match = text.match(/\{\{xref#[a-z0-9]+\}\}/)
+  if (match) {
+    const newText = text.replace(match[0], '').trim()
+    this.texts[0] = newText
+    this.length = newText.length
+  }
+  _format.call(this, `caption ${type} ${index}`)
+}
+
 function _text ({ content }) {
-  this.text.push(content)
-  this.length += content.length
+  const text = _processTokens.call(this, content)
+  this.texts.push(text)
+  this.length += text.length
 }
 
 function _format (format) {
-  const text = this.text.map(t => t === softbreak ? '\n' : t).join('')
+  const text = this.texts.map(t => t === softbreak ? '\n' : t).join('')
   const escaped = text
     .replace(/%/g, '%%')
     .replace(/\r?\n/g, '%N')
@@ -44,7 +93,7 @@ function _format (format) {
 }
 
 function _paragraph (wrapper) {
-  const text = this.text.map(t => t === softbreak ? ' ' : t.replace(/%/g, '%%')).join('')
+  const text = this.texts.map(t => t === softbreak ? ' ' : t.replace(/%/g, '%%')).join('')
   this.output(`type ${text}`)
   const length = this.length
   if (wrapper) {
@@ -137,7 +186,7 @@ const renderers = {
 
   blockquote_close () {
     if (this._nextIsCaption) {
-      _format.call(this, `caption ${this._nextIsCaption}`)
+      _caption.call(this, this._nextIsCaption)
       delete this._nextIsCaption
     }
     _decLevel.call(this, '_inBlockQuote')
@@ -148,12 +197,12 @@ const renderers = {
   },
 
   softbreak () {
-    this.text.push(softbreak)
+    this.texts.push(softbreak)
     ++this.length
   },
 
   paragraph_close () {
-    if ((this.text.length === 1 && this.text[0] === softbreak) || this._inBlockQuote === 1 || this.lists.length) {
+    if ((this.texts.length === 1 && this.texts[0] === softbreak) || this._inBlockQuote === 1 || this.lists.length) {
       return // ignore
     }
     if (this._inBlockQuote === 2) {
@@ -171,7 +220,7 @@ const renderers = {
 
   fence (token) {
     _reset.call(this)
-    this.text = [token.content.trim()]
+    this.texts = [token.content.trim()]
     _format.call(this, `code ${token.info}`)
     _reset.call(this)
     this._nextIsCaption = 'code'
@@ -188,7 +237,7 @@ const renderers = {
     if (this.basePath) {
       src = join(this.basePath, src)
     }
-    this.text = [src]
+    this.texts = [src]
     _format.call(this, 'image')
     _reset.call(this)
     this._nextIsCaption = 'image'
@@ -260,4 +309,34 @@ function render (tokens) {
   tokens.forEach((token, index) => (renderers[token.type] || nop).call(this, token, index, tokens))
 }
 
-module.exports = (tokens, output, settings = {}) => render.call({ output, ...settings, lists: [] }, tokens)
+module.exports = (tokens, output, settings = {}) => {
+  const context = {
+    output,
+    ...settings,
+    lists: [],
+    xrefs: [],
+    uid: 0,
+    indexes: {
+      code: 0,
+      image: 0
+    },
+    lastCaption: null
+  }
+  render.call(context, tokens)
+  const xrefs = context.xrefs.reduce((dictionary, xref) => {
+    if (!xref.textToReplace) {
+      dictionary[xref.id] = xref
+    }
+    return dictionary
+  }, {})
+  context.xrefs.forEach(({ textToReplace, id, type, index }) => {
+    if (textToReplace) {
+      if (id) {
+        const xref = xrefs[id]
+        type = xref.type
+        index = xref.index
+      }
+      output(`xref ${textToReplace} ${type} ${index}`)
+    }
+  })
+}

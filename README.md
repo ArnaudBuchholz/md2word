@@ -113,17 +113,18 @@ enter
 | italic | <i><small>n/a</small></i> | *italic* |
 | underline | <i><small>n/a</small></i> | <u>underline</u> |
 | code | language | <code>code</code> |
-| caption | code / image | <figcaption>code or image caption</figcaption> |
+| caption | code/image index | <figcaption>code or image caption</figcaption> (index is 1-based) |
 | inline_code | <i><small>n/a</small></i> | <samp>inline code</samp> |
 | box_header | <i><small>n/a</small></i> | Box header |
 | box_content | <i><small>n/a</small></i> | Box content |
-| image | <i><small>n/a</small></i> | Convert the selected path into an image path |
-| bullet_list | level (1-based) | * bullet list item |
-| order_list | level (1-based) | 1. order list item |
-| box_bullet_list | level (1-based) | * bullet list item (in a box) |
-| box_order_list | level (1-based) | 1. order list item (in a box) |
+| image | <i><small>n/a</small></i> | Convert the selected path into an image path |
+| bullet_list | level (1-based) | * bullet list item |
+| order_list | level (1-based) | 1. order list item |
+| box_bullet_list | level (1-based) | * bullet list item (in a box) |
+| box_order_list | level (1-based) | 1. order list item (in a box) |
 | url_title | <i><small>n/a</small></i> | url name |
 | url | <i><small>n/a</small></i> | [url](https://www.npmjs.com/package/md2word) |
+| xref | text code/image index | Replace the occurrences of text with a cross reference to the code or image (index is 1-based) |
 
 **NOTE** : Only URLs using the following link syntax are accepted :
 ```text
@@ -134,4 +135,50 @@ And are rendered like the following :
 
 ```html
 url name (<a href="url_address">url address</a>)
+```
+
+## Special syntaxes
+
+### Boxes
+
+A box is defined by a title and its content.
+The title is introduced with a blockquote (must be an unformatted one liner) and the content with an additional blockquote.
+
+```text
+> This is the box title
+>> This is the box **content**. It may contain :
+>>
+>> * Formatting
+>> * Bullet lists
+```
+
+> Example of a box
+
+### Cross references
+
+The following tokens are automatically converted into cross references to captions.
+
+* `{{xref:NEXT}}` references the next immediate code or image
+* `{{xref:PREVIOUS}}` references the previous immediate code or image
+* `{{xref:id}}` references the code or image flagged with `id`
+
+The id can be set directly in the caption using `{{xref:id}}`
+
+For example :
+```text
+The {{xref:NEXT}} is a JavaScript example
+
+```javascript
+// This is a javascript comment
+function div (a, b) {
+  return a / b;
+}
+
+assert.strictEqual(div(1, 1), 1);
+\```
+
+> {{xref:JS_SAMPLE}} JavaScript example
+
+The {{xref:PREVIOUS}} can also be referenced **after** it was used.
+Or it can be referenced **anywhere** in the document, as shown in {{xref:JS_SAMPLE}}.
 ```

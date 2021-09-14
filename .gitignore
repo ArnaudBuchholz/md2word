@@ -27,3 +27,6 @@ tests/cache/
 # word
 ~*.tmp
 ~*.doc
+
+# Temporary files
+tmp/

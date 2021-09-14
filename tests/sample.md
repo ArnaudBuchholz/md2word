@@ -104,6 +104,8 @@ lists.
 
 ### Code
 
+The {{xref:NEXT}} is a JavaScript example
+
 ```javascript
 // This is a javascript comment
 function div (a, b) {
@@ -113,6 +115,7 @@ function div (a, b) {
 assert.strictEqual(div(1, 1), 1);
 ```
 
-> JavaScript example
+> {{xref:JS_SAMPLE}} JavaScript example
 
-This is a very long line that goes way beyond the expected eighty characters. It is done on purpose to enable rule configuration.
+The {{xref:PREVIOUS}} can also be referenced **after** it was used.
+Or it can be referenced in any part in the document, as shown in {{xref:JS_SAMPLE}}

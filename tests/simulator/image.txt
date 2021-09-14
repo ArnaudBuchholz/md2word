@@ -1,0 +1,5 @@
+type path.jpg
+left 8
+select 8
+format image
+enter

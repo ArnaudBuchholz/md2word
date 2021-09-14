@@ -1,0 +1,9 @@
+type md2word (https://www.npmjs.com/package/md2word)
+left 47
+select 7
+format url_title
+right 3
+select 37
+format url
+right 2
+enter

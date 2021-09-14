@@ -1,0 +1,20 @@
+type A
+left 1
+select 1
+format bullet_list 1
+right 1
+enter
+type B
+left 1
+select 1
+format bullet_list 2
+right 1
+enter
+type C
+left 1
+select 1
+format bullet_list 2
+right 1
+enter
+type D
+enter
