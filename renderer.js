@@ -53,14 +53,25 @@ function _caption (type) {
     type,
     index
   }
-  this.xrefs.forEach(xref => {
-    if (xref.id.toLowerCase() === 'next') {
-      delete xref.id
-      xref.type = type
-      xref.index = index
-    }
-  })
-  _format.call(this, `caption ${type}`)
+  this.xrefs
+    .filter(({ id, textToReplace }) => id && textToReplace)
+    .forEach(xref => {
+      if (xref.id.toLowerCase() === 'next') {
+        delete xref.id
+      } else {
+        delete xref.textToReplace
+      }
+      Object.assign(xref, this.lastCaption)
+    })
+  // Assuming only one text exists, xref token is already replaced
+  const text = this.texts[0]
+  const match = text.match(/\{\{xref#[a-z0-9]+\}\}/)
+  if (match) {
+    const newText = text.replace(match[0], '').trim()
+    this.texts[0] = newText
+    this.length = newText.length
+  }
+  _format.call(this, `caption ${type} ${index}`)
 }
 
 function _text ({ content }) {
@@ -312,7 +323,20 @@ module.exports = (tokens, output, settings = {}) => {
     lastCaption: null
   }
   render.call(context, tokens)
-  context.xrefs.forEach(({ textToReplace, type, index }) => {
-    output(`xref ${textToReplace} ${type} ${index}`)
+  const xrefs = context.xrefs.reduce((dictionary, xref) => {
+    if (!xref.textToReplace) {
+      dictionary[xref.id] = xref
+    }
+    return dictionary
+  }, {})
+  context.xrefs.forEach(({ textToReplace, id, type, index }) => {
+    if (textToReplace) {
+      if (id) {
+        const xref = xrefs[id]
+        type = xref.type
+        index = xref.index
+      }
+      output(`xref ${textToReplace} ${type} ${index}`)
+    }
   })
 }
