@@ -1,0 +1,10 @@
+type image_path.jpg
+left 14
+select 14
+format image
+enter
+type Image caption
+left 13
+select 13
+format caption image 1
+enter
