@@ -82,6 +82,9 @@ const actions = {
     }
     delete this.selectFrom
     const unescaped = text.replace(/%N/g, '\n').replace(/%%/g, '%')
+    if (unescaped.length === 0) {
+      throw new Error('empty text detected')
+    }
     this.blocks.push(unescaped)
     this.pos += unescaped.length
     this.length += unescaped.length
