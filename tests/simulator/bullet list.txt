@@ -1,10 +1,10 @@
 type item 1
 left 6
 select 6
-format bullet_list 1
+format bullet_list 1 1
 enter
 type item 2
 left 6
 select 6
-format bullet_list 1
+format bullet_list 1 2
 enter

@@ -1,25 +1,25 @@
 type A
 left 1
 select 1
-format order_list 1
+format order_list 1 1
 right 1
 enter
 type B
 left 1
 select 1
-format order_list 2
+format order_list 2 1
 right 1
 enter
 type C
 left 1
 select 1
-format order_list 2
+format order_list 2 2
 right 1
 enter
 type D
 left 1
 select 1
-format order_list 1
+format order_list 1 2
 enter
 type E
 enter
