@@ -202,7 +202,10 @@ const renderers = {
   },
 
   paragraph_close () {
-    if ((this.texts.length === 1 && this.texts[0] === softbreak) || this._inBlockQuote === 1 || this.lists.length) {
+    if ((this.texts.length === 0) ||
+        (this.texts.length === 1 && this.texts[0] === softbreak) ||
+        this._inBlockQuote === 1 ||
+        this.lists.length) {
       return // ignore
     }
     if (this._inBlockQuote === 2) {
