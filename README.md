@@ -118,10 +118,10 @@ enter
 | box_header | <i><small>n/a</small></i> | Box header |
 | box_content | <i><small>n/a</small></i> | Box content |
 | image | <i><small>n/a</small></i> | Convert the selected path into an image path |
-| bullet_list | level (1-based) | * bullet list item |
-| order_list | level (1-based) | 1. order list item |
-| box_bullet_list | level (1-based) | * bullet list item (in a box) |
-| box_order_list | level (1-based) | 1. order list item (in a box) |
+| bullet_list | level index | * bullet list item (level and index are 1-based) |
+| order_list | level index | 1. order list item (level and index are 1-based) |
+| box_bullet_list | level index | * bullet list item (in a box, level and index are 1-based) |
+| box_order_list | level index | 1. order list item (in a box, level and index are 1-based) |
 | url_title | <i><small>n/a</small></i> | url name |
 | url | <i><small>n/a</small></i> | [url](https://www.npmjs.com/package/md2word) |
 | xref | text code/image index | Replace the occurrences of text with a cross reference to the code or image (index is 1-based) |
