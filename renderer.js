@@ -145,11 +145,17 @@ function _listItem () {
   _paragraph.call(this, length => {
     this.output(`left ${length}`)
     this.output(`select ${length}`)
-    const type = this.lists[this.lists.length - 1]
+    const level = this.lists.length
+    const list = this.lists[level - 1]
+    if (!list.index) {
+      list.index = 1
+    }
+    const { type, index } = list
+    ++list.index
     if (this._inBlockQuote === 2) {
-      this.output(`format box_${type}_list ${this.lists.length}`)
+      this.output(`format box_${type}_list ${level} ${index}`)
     } else {
-      this.output(`format ${type}_list ${this.lists.length}`)
+      this.output(`format ${type}_list ${level} ${index}`)
     }
     this.output('right 1')
   })
@@ -256,14 +262,14 @@ const renderers = {
     if (this.lists.length) {
       _listItem.call(this)
     }
-    this.lists.push('bullet')
+    this.lists.push({ type: 'bullet' })
   },
 
   ordered_list_open (token) {
     if (this.lists.length) {
       _listItem.call(this)
     }
-    this.lists.push('order')
+    this.lists.push({ type: 'order' })
   },
 
   list_item_open (token) {
