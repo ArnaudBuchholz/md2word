@@ -187,8 +187,9 @@ function html () {
       const { tagName, listType, block, className } = mappings[format]
       ++isInFormat
       if (tagName === 'li') {
-        const level = parseInt(info, 10)
-        while (lists.length < level) {
+        const [level, index] = info.split(' ')
+        const numericLevel = parseInt(level, 10)
+        while (lists.length < numericLevel) {
           lists.push(listType)
           if (className) {
             result.push(`<${listType} class="${className}">`)
@@ -196,8 +197,8 @@ function html () {
             result.push(`<${listType}>`)
           }
         }
-        closeLists(level)
-        result.push('<li>')
+        closeLists(numericLevel)
+        result.push(`<li data-index="${index}">`)
       } else {
         if (block && ['bullet_list', 'order_list', 'box_bullet_list', 'box_order_list'].includes(lastFormat)) {
           closeLists()

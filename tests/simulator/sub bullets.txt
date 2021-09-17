@@ -1,24 +1,24 @@
 type item 1
 left 6
 select 6
-format bullet_list 1
+format bullet_list 1 1
 right 1
 enter
 type item 2
 left 6
 select 6
-format bullet_list 2
+format bullet_list 2 1
 right 1
 enter
 type item 3
 left 6
 select 6
-format bullet_list 2
+format bullet_list 2 2
 right 1
 enter
 type item 4
 left 6
 select 6
-format bullet_list 1
+format bullet_list 1 2
 right 1
 enter
