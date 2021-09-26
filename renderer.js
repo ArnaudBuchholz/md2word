@@ -64,14 +64,21 @@ function _caption (type) {
       Object.assign(xref, this.lastCaption)
     })
   // Assuming only one text exists, xref token is already replaced
-  const text = this.texts[0]
-  const match = text.match(/\{\{xref#[a-z0-9]+\}\}/)
-  if (match) {
-    const newText = text.replace(match[0], '').trim()
-    this.texts[0] = newText
-    this.length = newText.length
-  }
-  _format.call(this, `caption ${type} ${index}`)
+  this.texts = this.texts.map(text => {
+    const match = text.match(/\{\{xref#[a-z0-9]+\}\}/)
+    if (match) {
+      const newText = text.replace(match[0], '').trim()
+      this.length -= text.length - newText.length
+      return newText
+    }
+    return text
+  })
+  _paragraph.call(this, length => {
+    this.output(`left ${length}`)
+    this.output(`select ${length}`)
+    this.output(`format caption ${type} ${index}`)
+    this.output('right 1')
+  })
 }
 
 function _text ({ content }) {
