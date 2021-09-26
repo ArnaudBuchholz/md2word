@@ -193,7 +193,12 @@ const renderers = {
 
   blockquote_open () {
     if (_incLevel.call(this, '_inBlockQuote') === 2) {
-      _format.call(this, 'box_header')
+      _paragraph.call(this, length => {
+        this.output(`left ${length}`)
+        this.output(`select ${length}`)
+        this.output('format box_header')
+        this.output('right 1')
+      })
     }
   },
 
