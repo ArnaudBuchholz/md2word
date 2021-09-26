@@ -6,6 +6,12 @@
 >> This is a content that can be **formatted**
 >> with any other *content*
 
+The only formatting element accepted is `code` :
+
+> This is formatted title with a `code` element
+>> This is a content that can be **formatted**
+>> with any other *content*
+
 ## Not a box
 
 > This is not a *box* because not followed by a deeper blockquote
