@@ -33,8 +33,8 @@ describe('linter', () => {
 
   const expected = {
     boxes: {
-      24: 'detects formatted titles',
-      29: 'detects multiline titles'
+      30: 'detects formatted titles',
+      35: 'detects multiline titles'
     },
     'formatted header': {
       1: 'detects formatted header'
@@ -67,6 +67,10 @@ describe('linter', () => {
       39: 'detects xref in a header',
       43: 'detects invalid xref (no NEXT)',
       45: 'detects invalid xref (no NEXT)'
+    },
+    caption: {
+      15: 'detects image without caption',
+      19: 'detects code without caption'
     }
   }
 

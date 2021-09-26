@@ -4,6 +4,10 @@ const POSSIBLE_TITLE = 1
 const BOX_BODY = 2
 const END_OF_BOX = 3
 
+function checkFormatOfTitle (inline) {
+  return inline.children.every(token => ['text', 'code_inline'].includes(token.type))
+}
+
 module.exports = {
   names: ['md2word/box'],
   description: 'Blockquote to box validation',
@@ -11,18 +15,18 @@ module.exports = {
   function: (params, onError) => {
     let state = 0
     let possibleBox
-    let formattedTitle
+    let possibleTitle
     params.tokens.forEach(token => {
       if (token.type === 'blockquote_open') {
         if (!state) {
           possibleBox = token
           state = POSSIBLE_TITLE
-          formattedTitle = false
+          possibleTitle = null
         } else {
-          if (formattedTitle) {
+          if (possibleTitle && !checkFormatOfTitle(possibleTitle)) {
             onError({
               lineNumber: possibleBox.lineNumber,
-              detail: 'Box title must be a non-formatted one liner',
+              detail: 'Box title must be a one liner',
               context: possibleBox.line
             })
           }
@@ -31,7 +35,7 @@ module.exports = {
       }
       if (token.type === 'inline') {
         if (state === POSSIBLE_TITLE) {
-          formattedTitle = token.children.length !== 1
+          possibleTitle = token
         } else if (state === END_OF_BOX) {
           onError({
             lineNumber: token.lineNumber,
