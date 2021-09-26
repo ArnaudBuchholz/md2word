@@ -13,7 +13,7 @@ function isValidCaption (tokens, from) {
   check(tokens, from + 3, 'paragraph_close')
   check(tokens, from + 4, 'blockquote_close')
   const inline = check(tokens, from + 2, 'inline')
-  if (inline.children.length !== 1) {
+  if (!inline.children.every(token => ['text', 'code_inline'].includes(token.type))) {
     throw new Error('Complex caption')
   }
 }
