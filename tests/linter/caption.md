@@ -19,3 +19,11 @@ alert('Hello World !')
 ```javascript
 alert('Hello World !')
 ```
+
+## Code element enabled in caption
+
+```javascript
+alert('Hello World !')
+```
+
+> Example of `alert`
