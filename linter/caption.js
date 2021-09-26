@@ -24,10 +24,14 @@ module.exports = {
   tags: ['md2word'],
   function: (params, onError) => {
     params.tokens.forEach((token, index, tokens) => {
-      const needCaption = (token.type === 'fence' && token.tag === 'code') ||
-        token.type === 'image'
-      if (needCaption) {
-        const next = tokens[index + 1]
+      let captionOffset = 0
+      if (token.type === 'fence' && token.tag === 'code') {
+        captionOffset = 1
+      } else if (token.type === 'inline' && token.children.length === 1 && token.children[0].type === 'image') {
+        captionOffset = 2
+      }
+      if (captionOffset !== 0) {
+        const next = tokens[index + captionOffset]
         if (!next || next.type !== 'blockquote_open') {
           onError({
             lineNumber: token.lineNumber,
@@ -37,7 +41,7 @@ module.exports = {
           return
         }
         try {
-          isValidCaption(tokens, index + 1)
+          isValidCaption(tokens, index + captionOffset)
         } catch (e) {
           onError({
             lineNumber: next.lineNumber,
