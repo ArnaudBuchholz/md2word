@@ -67,6 +67,10 @@ describe('linter', () => {
       39: 'detects xref in a header',
       43: 'detects invalid xref (no NEXT)',
       45: 'detects invalid xref (no NEXT)'
+    },
+    caption: {
+      15: 'detects image without caption',
+      19: 'detects code without caption'
     }
   }
 
