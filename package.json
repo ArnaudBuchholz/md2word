@@ -1,6 +1,6 @@
 {
   "name": "md2word",
-  "version": "0.9.7",
+  "version": "0.9.8",
   "description": "Markdown to Word automation",
   "main": "./index.js",
   "files": [
