@@ -100,6 +100,7 @@ enter
 | right | character count | Moves the cursor to the right |
 | select | character count | Moves the cursor to the right and selects underlying text |
 | format | style name | Format the current selection with the style |
+| xref | text code/image index | Replace the occurrences of text with a cross reference to the code or image (index is 1-based) |
 
 ### List of styles
 
@@ -124,7 +125,6 @@ enter
 | box_order_list | level index | 1. order list item (in a box, level and index are 1-based) |
 | url_title | <i><small>n/a</small></i> | url name |
 | url | <i><small>n/a</small></i> | [url](https://www.npmjs.com/package/md2word) |
-| xref | text code/image index | Replace the occurrences of text with a cross reference to the code or image (index is 1-based) |
 
 **NOTE** : Only URLs using the following link syntax are accepted :
 ```text
@@ -139,10 +139,23 @@ url name (<a href="url_address">url address</a>)
 
 ## Special syntaxes
 
+### Captions
+
+Images and code samples must own a caption.
+
+The caption is introduced with a blockquote : it must be an unformatted one liner (you may use code element).
+
+```javascript
+alert('Hello World !');
+```
+
+> Example using the `alert` function
+
 ### Boxes
 
 A box is defined by a title and its content.
-The title is introduced with a blockquote (must be an unformatted one liner) and the content with an additional blockquote.
+The title is introduced with a blockquote : it must be an unformatted one liner (you may use code element).
+The content is introduced with an additional blockquote level.
 
 ```text
 > This is the box title
