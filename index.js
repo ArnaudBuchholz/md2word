@@ -31,6 +31,8 @@ try {
   // ignore
 }
 
+const errors = []
+
 readdir(customRulesPath)
   .then(ruleNames => {
     const customRules = ruleNames.map(name => require(join(customRulesPath, name)))
@@ -41,18 +43,13 @@ readdir(customRulesPath)
     })
   })
   .then(report => {
-    const issues = report[mdFilename]
-    if (issues.length) {
-      issues.forEach(issue => {
-        error(mdFilename, issue.lineNumber, `${issue.errorDetail || issue.ruleDescription} (${issue.ruleNames.join(', ')})`)
-        if (verbose) {
-          console.error(issue)
-        }
+    report[mdFilename].forEach(issue => {
+      errors.push({
+        line: issue.lineNumber,
+        message: `${issue.errorDetail || issue.ruleDescription} (${issue.ruleNames.join(', ')})`,
+        details: issue
       })
-      if (!serveAnyway) {
-        process.exit(issues.length)
-      }
-    }
+    })
     return readFile(mdFilename)
   })
   .then(buffer => buffer.toString())
@@ -61,10 +58,23 @@ readdir(customRulesPath)
     const issues = await checkCode(basePath, tokens)
     if (issues.length) {
       issues.forEach(({ line, message }) => {
-        error(mdFilename, line, message)
+        errors.push({
+          line,
+          message
+        })
       })
+    }
+    if (errors.length) {
+      errors
+        .sort((err1, err2) => err1.line - err2.line)
+        .forEach(({ line, message, details }) => {
+          error(mdFilename, line, message)
+          if (verbose && details) {
+            console.error(details)
+          }
+        })
       if (!serveAnyway) {
-        process.exit(issues.length)
+        process.exit(errors.length)
       }
     }
     return tokens

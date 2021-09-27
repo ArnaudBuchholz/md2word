@@ -1,4 +1,5 @@
 # md2word
+<!-- markdownlint-disable line-length -->
 
 Markdown to word automation
 
@@ -34,13 +35,15 @@ Example file :
 }
 ```
 
+> Example of a `md2word.json`
+
 ## Code linters
 
 Code linting is made possible through dedicated scripts *(not included)*.
 
 For each language that requires validation, create a file named `<language>.linter.js` in the folder containing the markdown file.
 
-The module is loaded using [`require`](https://nodejs.org/api/modules.html#modules_require_id) and it must only exports one **asynchronous** function taking two parameters :
+The module is loaded using Node.js's `require` and it must only exports one **asynchronous** function taking two parameters :
 
 * `basePath` the folder containing the markdown file being parsed
 * `text` the code to validate
@@ -59,6 +62,8 @@ module.exports = async function (basePath, text) {
 }
 ```
 
+> Example showing the expected return of a custom linter
+
 An example of a javascript linter *(based on [standard](https://www.npmjs.com/package/standard))* is provided in [in the repository](https://github.com/ArnaudBuchholz/md2word/blob/main/tests/javascript.linter.js).
 
 ## Commands
@@ -67,14 +72,17 @@ Basically, the markdown file is parsed and broken down into a set of **commands*
 
 For instance, the following markdown :
 
-```
+```text
 # This is an example
 
 This text is **bolded and *italic***, so cool !
 ````
 
+> Example markdown
+
 Is translated into this list of commands :
-```
+
+```text
 text This is an example
 left 18
 select 18
@@ -91,6 +99,8 @@ right 11
 enter
 ```
 
+> Example list of commands generated from the markdown
+
 ### List of commands
 
 | Command | Parameter | Explanation |
@@ -100,36 +110,42 @@ enter
 | right | character count | Moves the cursor to the right |
 | select | character count | Moves the cursor to the right and selects underlying text |
 | format | style name | Format the current selection with the style |
+| xref | text code/image index | Replace the occurrences of text with a cross reference to the code or image (index is 1-based) |
 
 ### List of styles
+<!-- markdownlint-disable no-inline-html -->
 
 | Style name | Style param | Effect |
 |---|---|---|
-| header1 | <i><small>n/a</small></i> | <h1>Header level 1</h1> |
-| header2 | <i><small>n/a</small></i> | <h2>Header level 2</h2> |
-| header3 | <i><small>n/a</small></i> | <h3>Header level 3</h3> |
-| header4 | <i><small>n/a</small></i> | <h4>Header level 4</h4> |
-| bold | <i><small>n/a</small></i> | **bold** |
-| italic | <i><small>n/a</small></i> | *italic* |
-| underline | <i><small>n/a</small></i> | <u>underline</u> |
+| header1 | _<small>n/a</small>_ | <h1>Header level 1</h1> |
+| header2 | _<small>n/a</small>_ | <h2>Header level 2</h2> |
+| header3 | _<small>n/a</small>_ | <h3>Header level 3</h3> |
+| header4 | _<small>n/a</small>_ | <h4>Header level 4</h4> |
+| bold | _<small>n/a</small>_ | **bold** |
+| italic | _<small>n/a</small>_ | *italic* |
+| underline | _<small>n/a</small>_ | <u>underline</u> |
 | code | language | <code>code</code> |
 | caption | code/image index | <figcaption>code or image caption</figcaption> (index is 1-based) |
-| inline_code | <i><small>n/a</small></i> | <samp>inline code</samp> |
-| box_header | <i><small>n/a</small></i> | Box header |
-| box_content | <i><small>n/a</small></i> | Box content |
-| image | <i><small>n/a</small></i> | Convert the selected path into an image path |
+| inline_code | _<small>n/a</small>_ | <samp>inline code</samp> |
+| box_header | _<small>n/a</small>_ | Box header |
+| box_content | _<small>n/a</small>_ | Box content |
+| image | _<small>n/a</small>_ | Convert the selected path into an image path |
 | bullet_list | level index | * bullet list item (level and index are 1-based) |
 | order_list | level index | 1. order list item (level and index are 1-based) |
 | box_bullet_list | level index | * bullet list item (in a box, level and index are 1-based) |
 | box_order_list | level index | 1. order list item (in a box, level and index are 1-based) |
-| url_title | <i><small>n/a</small></i> | url name |
-| url | <i><small>n/a</small></i> | [url](https://www.npmjs.com/package/md2word) |
-| xref | text code/image index | Replace the occurrences of text with a cross reference to the code or image (index is 1-based) |
+| url_title | _<small>n/a</small>_ | url name |
+| url | _<small>n/a</small>_ | [url](https://www.npmjs.com/package/md2word) |
+
+<!-- markdownlint-enable no-inline-html -->
 
 **NOTE** : Only URLs using the following link syntax are accepted :
+
 ```text
 [url name](url_address)
 ```
+
+> Accepted URL syntax
 
 And are rendered like the following :
 
@@ -137,12 +153,27 @@ And are rendered like the following :
 url name (<a href="url_address">url address</a>)
 ```
 
+> Example rendering of URL syntax
+
 ## Special syntaxes
+
+### Captions
+
+Images and code samples must own a caption.
+
+The caption is introduced with a blockquote : it must be an unformatted one liner (you may use code element).
+
+```javascript
+alert('Hello World !');
+```
+
+> Example using the `alert` function
 
 ### Boxes
 
 A box is defined by a title and its content.
-The title is introduced with a blockquote (must be an unformatted one liner) and the content with an additional blockquote.
+The title is introduced with a blockquote : it must be an unformatted one liner (you may use code element).
+The content is introduced with an additional blockquote level.
 
 ```text
 > This is the box title
@@ -165,6 +196,7 @@ The following tokens are automatically converted into cross references to captio
 The id can be set directly in the caption using `{{xref:id}}`
 
 For example :
+
 ```text
 The {{xref:NEXT}} is a JavaScript example
 
@@ -182,3 +214,5 @@ assert.strictEqual(div(1, 1), 1);
 The {{xref:PREVIOUS}} can also be referenced **after** it was used.
 Or it can be referenced **anywhere** in the document, as shown in {{xref:JS_SAMPLE}}.
 ```
+
+> Example of cross references
