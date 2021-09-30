@@ -73,12 +73,7 @@ function _caption (type) {
     }
     return text
   })
-  _paragraph.call(this, length => {
-    this.output(`left ${length}`)
-    this.output(`select ${length}`)
-    this.output(`format caption ${type} ${index}`)
-    this.output('right 1')
-  })
+  _paragraph.call(this, `caption ${type} ${index}`)
 }
 
 function _text ({ content }) {
@@ -100,10 +95,19 @@ function _format (format) {
 }
 
 function _paragraph (wrapper) {
+  if (typeof wrapper === 'string') {
+    const wrapInformat = wrapper
+    wrapper = length => {
+      this.output(`left ${length}`)
+      this.output(`select ${length}`)
+      this.output(`format ${wrapInformat}`)
+      this.output('right 1')
+    }
+  }
   const text = this.texts.map(t => t === softbreak ? ' ' : t.replace(/%/g, '%%')).join('')
   this.output(`type ${text}`)
   const length = this.length
-  if (wrapper) {
+  if (typeof wrapper === 'function') {
     wrapper(length)
   }
   let leftPos = length
@@ -129,6 +133,7 @@ function _paragraph (wrapper) {
   if (rightPos < length) {
     this.output(`right ${length - rightPos + selectionOffset}`)
   }
+  this.output('enter')
 }
 
 function _incLevel (member) {
@@ -166,7 +171,6 @@ function _listItem () {
     }
     this.output('right 1')
   })
-  this.output('enter')
   _reset.call(this)
 }
 
@@ -193,12 +197,7 @@ const renderers = {
 
   blockquote_open () {
     if (_incLevel.call(this, '_inBlockQuote') === 2) {
-      _paragraph.call(this, length => {
-        this.output(`left ${length}`)
-        this.output(`select ${length}`)
-        this.output('format box_header')
-        this.output('right 1')
-      })
+      _paragraph.call(this, 'box_header')
     }
   },
 
@@ -226,17 +225,13 @@ const renderers = {
         this.lists.length) {
       return // ignore
     }
+    let wrapper
     if (this._inBlockQuote === 2) {
-      _paragraph.call(this, length => {
-        this.output(`left ${length}`)
-        this.output(`select ${length}`)
-        this.output('format box_content')
-        this.output('right 1')
-      })
+      wrapper = 'box_content'
     } else {
-      _paragraph.call(this)
+      wrapper = true
     }
-    this.output('enter')
+    _paragraph.call(this, wrapper)
   },
 
   fence (token) {
