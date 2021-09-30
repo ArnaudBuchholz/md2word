@@ -54,19 +54,21 @@ function _caption (type) {
     index
   }
   this.xrefs
-    .filter(({ id, textToReplace }) => id && textToReplace)
+    .filter(({ id }) => id && id.toLowerCase() === 'next')
     .forEach(xref => {
-      if (xref.id.toLowerCase() === 'next') {
-        delete xref.id
-      } else {
-        delete xref.textToReplace
-      }
+      delete xref.id
       Object.assign(xref, this.lastCaption)
     })
-  // Assuming only one text exists, xref token is already replaced
+  // xref token is already replaced
   this.texts = this.texts.map(text => {
     const match = text.match(/\{\{xref#[a-z0-9]+\}\}/)
     if (match) {
+      this.xrefs
+        .filter(({ textToReplace }) => textToReplace === match[0])
+        .forEach(xref => {
+          delete xref.textToReplace
+          Object.assign(xref, this.lastCaption)
+        })
       const newText = text.replace(match[0], '').trim()
       this.length -= text.length - newText.length
       return newText
