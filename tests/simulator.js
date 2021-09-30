@@ -235,12 +235,19 @@ function html () {
     } else {
       const text = data
       if (text === br) {
-        if (!lastFormat || !mappings[lastFormat].block) {
-          result.push('<br>')
-        } // else useless
+        if (lastFormat && lastFormat !== 'image' && mappings[lastFormat].block) {
+          const last = result.pop()
+          result.push('<enter/>', last)
+        } else {
+          result.push('<enter/>', '<br>')
+        }
       } else {
-        if (!isInFormat && lists.length) {
-          closeLists()
+        if (!isInFormat) {
+          if (lists.length) {
+            closeLists()
+          } else {
+            lastFormat = undefined
+          }
         }
         const end = walkPos + text.length
         if (this.pos > walkPos && this.pos < end) {
