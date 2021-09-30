@@ -235,11 +235,11 @@ function html () {
     } else {
       const text = data
       if (text === br) {
-        if (lastFormat && mappings[lastFormat].block) {
+        if (lastFormat && lastFormat !== 'image' && mappings[lastFormat].block) {
           const last = result.pop()
-          result.push('<cr/>', last)
+          result.push('<enter/>', last)
         } else {
-          result.push('<cr/>', '<br>')
+          result.push('<enter/>', '<br>')
         }
       } else {
         if (!isInFormat) {
