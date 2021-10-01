@@ -1,0 +1,7 @@
+As shown in {{xref:EXAMPLE}}, the code works.
+
+```javascript
+alert('Hello World')
+```
+
+> {{xref:EXAMPLE}} An example of the `alert` function that displays the Hello World message

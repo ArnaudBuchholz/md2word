@@ -193,7 +193,7 @@ The following tokens are automatically converted into cross references to captio
 * `{{xref:PREVIOUS}}` references the previous immediate code or image
 * `{{xref:id}}` references the code or image flagged with `id`
 
-The id can be set directly in the caption using `{{xref:id}}`
+The id can be set directly in the caption using `{{xref:id}}`: it must be specified at the **beginning** of the caption as surrounding spaces are removed.
 
 For example :
 

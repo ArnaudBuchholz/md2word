@@ -13,6 +13,13 @@ function _reset () {
   this.stylesToApply = []
 }
 
+function _adjustStylesToapply (offset) {
+  this.stylesToApply.forEach(style => {
+    style.from += offset
+    style.to += offset
+  })
+}
+
 function _startInlineFormatting (style) {
   this.stylesInProgress.push({
     style,
@@ -60,17 +67,19 @@ function _caption (type) {
       Object.assign(xref, this.lastCaption)
     })
   // xref token is already replaced
-  this.texts = this.texts.map(text => {
-    const match = text.match(/\{\{xref#[a-z0-9]+\}\}/)
+  this.texts = this.texts.map((text, index) => {
+    const match = text.match(/ *(\{\{xref#[a-z0-9]+\}\}) */)
     if (match) {
       this.xrefs
-        .filter(({ textToReplace }) => textToReplace === match[0])
+        .filter(({ textToReplace }) => textToReplace === match[1])
         .forEach(xref => {
           delete xref.textToReplace
           Object.assign(xref, this.lastCaption)
         })
-      const newText = text.replace(match[0], '').trim()
-      this.length -= text.length - newText.length
+      const newText = text.replace(match[0], '')
+      const offset = newText.length - text.length
+      _adjustStylesToapply.call(this, offset)
+      this.length += offset
       return newText
     }
     return text
