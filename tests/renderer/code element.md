@@ -1,0 +1,1 @@
+These are `code` elements: `alert`, `prompt`.
