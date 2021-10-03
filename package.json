@@ -1,6 +1,6 @@
 {
   "name": "md2word",
-  "version": "0.9.11",
+  "version": "1.0.0",
   "description": "Markdown to Word automation",
   "main": "./index.js",
   "files": [
@@ -12,10 +12,11 @@
   },
   "scripts": {
     "test": "mocha",
+    "cover": "nyc mocha && nyc report --reporter=lcov",
     "lint": "standard --fix",
     "mocha": "mocha",
     "mocha-dbg": "node --inspect-brk node_modules/mocha/bin/_mocha",
-    "start": "reserve --config tests/reserve.json"
+    "start": "reserve"
   },
   "repository": {
     "type": "git",
@@ -39,7 +40,8 @@
   },
   "devDependencies": {
     "mocha": "^9.1.2",
-    "standard": "^16.0.3"
+    "nyc": "^15.1.0",
+    "standard": "^16.0.4"
   },
   "standard": {
     "env": [
@@ -53,5 +55,17 @@
     "spec": [
       "tests/mocha/*.test.js"
     ]
+  },
+  "nyc": {
+    "all": true,
+    "cache": false,
+    "check-coverage": true,
+    "exclude": [
+      "tests/**/*"
+    ],
+    "branches": 100,
+    "lines": 100,
+    "functions": 100,
+    "statements": 100
   }
 }
