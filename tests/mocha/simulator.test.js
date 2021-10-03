@@ -1,7 +1,7 @@
 'use strict'
 
 const assert = require('assert')
-const simulator = require('../simulator')
+const simulator = require('../../simulator')
 const { basename, extname, join } = require('path')
 const { readdir, readFile } = require('fs').promises
 
