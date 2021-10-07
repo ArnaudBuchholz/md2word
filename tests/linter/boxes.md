@@ -21,7 +21,7 @@ Another example :
 > This is not a *box* because not immediately followed by a deeper blockquote
 <!-- markdownlint-disable-next-line -->
 
->> Test
+>> This is invalid because not expected
 
 ## Invalid boxes
 
@@ -44,6 +44,15 @@ Another example :
 
 **NOTE** : the above seems to be parsed incorrectly by markdown-it
 (it is merged with the formatted content)
+
+### No title
+
+>> A double blockquote alone does not make sense
+
+### Title after the body
+
+>> This looks like box content
+> This looks like a title
 
 ## Last valid box description
 
