@@ -14,6 +14,12 @@ alert('Hello World !')
 
 ![any image](image.png)
 
+## Image with empty caption
+
+![any image](image.png)
+
+>
+
 ## Code without caption
 
 ```javascript
