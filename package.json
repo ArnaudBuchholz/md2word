@@ -61,7 +61,8 @@
     "cache": false,
     "check-coverage": true,
     "exclude": [
-      "tests/**/*"
+      "tests/**/*",
+      "vscode-format.js"
     ],
     "branches": 100,
     "lines": 100,
