@@ -30,6 +30,19 @@ module.exports = {
       } else if (token.type === 'inline' && token.children.length === 1 && token.children[0].type === 'image') {
         captionOffset = 2
       }
+      if (token.type === 'blockquote_open' && token.level === 0 && !token._isCaption) {
+        try {
+          isValidCaption(tokens, index)
+          onError({
+            lineNumber: token.lineNumber,
+            detail: 'Standalone caption is useless',
+            context: token.line
+          })
+          return
+        } catch (e) {
+          // Not a valid caption anyway
+        }
+      }
       if (captionOffset !== 0) {
         const next = tokens[index + captionOffset]
         if (!next || next.type !== 'blockquote_open') {
@@ -40,6 +53,7 @@ module.exports = {
           })
           return
         }
+        next._isCaption = true
         try {
           isValidCaption(tokens, index + captionOffset)
         } catch (e) {
