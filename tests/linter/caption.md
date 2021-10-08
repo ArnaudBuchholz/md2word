@@ -33,3 +33,21 @@ alert('Hello World !')
 ```
 
 > Example of `alert`
+
+## Standalone caption
+
+> Should not be there
+
+## Box recognized as a caption
+
+```javascript
+alert('Hello World !')
+```
+
+> Looks like a caption
+>> But this is a box
+
+## Standalone box should not be recognized as a caption
+
+> This is a valid box
+>> With some content
