@@ -68,14 +68,17 @@ describe('linter', () => {
       34: 'unknown xref id',
       36: 'xref in a box title',
       39: 'xref in a header',
-      43: 'invalid xref (no NEXT)',
+      43: 'standalone caption',
       45: 'invalid xref (no NEXT)',
-      47: 'invalid token'
+      47: 'invalid xref (no NEXT)',
+      49: 'invalid token'
     },
     caption: {
       15: 'image without caption',
       21: 'image with empty caption',
-      25: 'code without caption'
+      25: 'code without caption',
+      39: 'standalone caption',
+      47: 'box is not a caption'
     }
   }
 
