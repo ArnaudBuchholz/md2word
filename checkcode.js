@@ -1,6 +1,8 @@
 'use strict'
 
 const { join } = require('path')
+const { access } = require('fs/promises')
+const { constants } = require('fs')
 
 module.exports = async function checkCode (basePath, tokens) {
   const errors = []
@@ -9,22 +11,28 @@ module.exports = async function checkCode (basePath, tokens) {
     for await (const token of tokens) {
       if (token.type === 'fence') {
         const language = token.info
+        const linterPath = join(basePath, `${language}.linter.js`)
+        const baseLine = token.map[0] + 1
         try {
-          const linter = require(join(basePath, `${language}.linter.js`))
+          await access(linterPath, constants.R_OK)
           try {
+            const linter = require(linterPath)
             const results = await linter(basePath, token.content) || []
             results.forEach(({ line, message }) => {
               errors.push({
-                line: line + token.map[0] + 1,
+                line: line + baseLine,
                 message
               })
             })
           } catch (e) {
-            console.error(`Error while invoking linter for ${language}`, e)
-            process.exit(-1)
+            errors.push({
+              line: baseLine,
+              message: `Error while invoking linter for ${language}`,
+              details: e
+            })
           }
         } catch (e) {
-          // ignore error
+          // ignore
         }
       } else if (token.children) {
         await walk(token.children)
