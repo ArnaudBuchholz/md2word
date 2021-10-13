@@ -97,6 +97,8 @@ async function main (mdFilename, ...argv) {
   return { configuration }
 }
 
+module.exports = main
+
 /* istanbul ignore if */ // Only used for command line
 if (require.main === module) {
   const [,, mdFilename, ...argv] = process.argv
