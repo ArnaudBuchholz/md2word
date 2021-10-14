@@ -127,8 +127,8 @@ function _paragraph (wrapper) {
   this.stylesToApply.forEach(({ from, to, style }) => {
     if (from < leftPos) {
       this.output(`left ${leftPos - from + selectionOffset}`)
-    } else if (from > rightPos) {
-      this.output(`right ${from - rightPos + selectionOffset}`)
+    // } else if (from > rightPos) {
+    //   this.output(`right ${from - rightPos + selectionOffset}`)
     } else {
       this.output('left 1') // removes selection
       this.output(`right ${from - leftPos}`)
