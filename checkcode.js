@@ -1,8 +1,9 @@
 'use strict'
 
 const { join } = require('path')
-const { access } = require('fs/promises')
-const { constants } = require('fs')
+const { constants, access: accessSync } = require('fs')
+const { promisify } = require('util')
+const access = promisify(accessSync)
 
 module.exports = async function checkCode (basePath, tokens) {
   const errors = []
