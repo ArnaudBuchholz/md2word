@@ -10,12 +10,8 @@ const renderer = require('./renderer')
 const { check, log, serve } = require('reserve')
 const customRulesPath = join(__dirname, './linter')
 const checkCode = require('./checkcode')
-const { error } = require('./report')
 
-async function main (mdFilename, ...argv) {
-  const verbose = argv.includes('-verbose')
-  const lintOnly = argv.includes('-lintOnly')
-  const serveAnyway = argv.includes('-serve')
+async function main (mdFilename) {
   let basePath
 
   if (isAbsolute(mdFilename)) {
@@ -31,7 +27,7 @@ async function main (mdFilename, ...argv) {
     // ignore
   }
 
-  const errors = []
+  let errors = []
   const ruleNames = await readdir(customRulesPath)
   const customRules = ruleNames.map(name => require(join(customRulesPath, name)))
   const report = await markdownlint({
@@ -57,28 +53,12 @@ async function main (mdFilename, ...argv) {
   })
 
   if (errors.length) {
-    errors
-      .sort((err1, err2) => err1.line - err2.line)
-      .forEach(({ line, message, details }) => {
-        error(mdFilename, line, message)
-        if (verbose && details) {
-          console.error(details)
-        }
-      })
-    if (!serveAnyway) {
-      return { errors }
-    }
-  }
-  if (lintOnly) {
-    return { errors: [] }
+    errors = errors.sort((err1, err2) => err1.line - err2.line)
   }
 
   const instructions = []
   renderer(tokens, instruction => instructions.push(instruction), { basePath })
   const script = instructions.join('\n')
-  if (verbose) {
-    console.log(script)
-  }
 
   const configuration = await check({
     port: 53475,
@@ -94,17 +74,28 @@ async function main (mdFilename, ...argv) {
       }
     }]
   })
-  return { configuration }
+  return { errors, script, configuration }
 }
 
 module.exports = main
 
 /* istanbul ignore if */ // Only used for command line
 if (require.main === module) {
-  const [,, mdFilename, ...argv] = process.argv
-  main(mdFilename, ...argv)
-    .then(({ errors, configuration }) => {
-      if (errors) {
+  const { argv } = process
+  const verbose = argv.includes('-verbose')
+  const lintOnly = argv.includes('-lintOnly')
+  const serveAnyway = argv.includes('-serve')
+  const [,, mdFilename] = argv
+  main(mdFilename)
+    .then(({ errors, script, configuration }) => {
+      errors
+        .forEach(({ line, message, details }) => {
+          console.error(`${mdFilename}@${line}: ${message}`)
+          if (verbose && details) {
+            console.error(details)
+          }
+        })
+      if (lintOnly || (errors.length && !serveAnyway)) {
         process.exit(errors.length)
       }
       log(serve(configuration))
