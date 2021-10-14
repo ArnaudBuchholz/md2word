@@ -26,6 +26,7 @@ async function main () {
           const html = simulator(source)
           assert.strictEqual(html, expected)
         } catch (e) {
+          // console.log(e)
           assert.strictEqual(expected, undefined)
         }
       })
