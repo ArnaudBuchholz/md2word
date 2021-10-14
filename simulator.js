@@ -135,6 +135,7 @@ const actions = {
     this.xrefs[xref] = { label, name }
   },
 
+  // istanbul ignore next
   debug () { debugger } // eslint-disable-line
 }
 
