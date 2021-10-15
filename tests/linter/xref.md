@@ -38,8 +38,12 @@ Pointing to a non existing xref should be an error : {{xref:NOT_EXISTING}}
 
 ### In a subtitle {{xref:NOT_HERE}}
 
-### Final edge case
+### Final edge cases
+
+> {{xref:INVALID}} Not even a caption
 
 This {{xref:NEXT}} does not exist
 
 This {{xref:NEXT}} also does not exist
+
+This {{unkown:whatever}} token does not exist

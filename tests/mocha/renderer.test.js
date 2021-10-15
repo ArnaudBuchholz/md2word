@@ -3,7 +3,7 @@
 const assert = require('assert')
 const md = require('markdown-it')()
 const renderer = require('../../renderer')
-const simulator = require('../simulator')
+const simulator = require('../../simulator')
 const { basename, extname, join } = require('path')
 const { readdir, readFile } = require('fs').promises
 

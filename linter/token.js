@@ -9,7 +9,6 @@ module.exports = {
     const xrefs = []
     let inHeading = false
     let inBlock = 0
-    let possibleCaption = false
     let atLeastOneCaption = false
     const xrefNextTokens = []
     const check = token => {
@@ -28,8 +27,6 @@ module.exports = {
             })
             xrefs.shift()
           }
-        } else {
-          possibleCaption = true
         }
       } else if (token.type === 'blockquote_close') {
         if (--inBlock === 0) {
@@ -37,10 +34,8 @@ module.exports = {
             delete xrefs[0].possibleBoxHeader
             xrefs[0].id = true
           }
-          if (possibleCaption) {
-            atLeastOneCaption = true
-            xrefNextTokens.length = 0
-          }
+          atLeastOneCaption = true
+          xrefNextTokens.length = 0
         }
       } else if (token.type === 'text') {
         token.content.replace(reToken, (match, type, data) => {

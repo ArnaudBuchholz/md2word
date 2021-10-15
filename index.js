@@ -10,101 +10,95 @@ const renderer = require('./renderer')
 const { check, log, serve } = require('reserve')
 const customRulesPath = join(__dirname, './linter')
 const checkCode = require('./checkcode')
-const { error } = require('./report')
 
-const mdFilename = process.argv[2]
-const verbose = process.argv.includes('-verbose')
-const lintOnly = process.argv.includes('-lintOnly')
-const serveAnyway = process.argv.includes('-serve')
-let basePath
+async function main (mdFilename) {
+  let basePath
 
-if (isAbsolute(mdFilename)) {
-  basePath = dirname(mdFilename)
-} else {
-  basePath = dirname(join(process.cwd(), mdFilename))
-}
+  if (isAbsolute(mdFilename)) {
+    basePath = dirname(mdFilename)
+  } else {
+    basePath = dirname(join(process.cwd(), mdFilename))
+  }
 
-let config
-try {
-  config = require(join(basePath, 'md2word.json'))
-} catch (e) {
-  // ignore
-}
+  let config
+  try {
+    config = require(join(basePath, 'md2word.json'))
+  } catch (e) {
+    // ignore
+  }
 
-const errors = []
-
-readdir(customRulesPath)
-  .then(ruleNames => {
-    const customRules = ruleNames.map(name => require(join(customRulesPath, name)))
-    return markdownlint({
-      files: [mdFilename],
-      customRules,
-      config
+  let errors = []
+  const ruleNames = await readdir(customRulesPath)
+  const customRules = ruleNames.map(name => require(join(customRulesPath, name)))
+  const report = await markdownlint({
+    files: [mdFilename],
+    customRules,
+    config
+  })
+  report[mdFilename].forEach(issue => {
+    errors.push({
+      line: issue.lineNumber,
+      message: `${issue.errorDetail || issue.ruleDescription} (${issue.ruleNames.join(', ')})`,
+      details: issue
     })
   })
-  .then(report => {
-    report[mdFilename].forEach(issue => {
-      errors.push({
-        line: issue.lineNumber,
-        message: `${issue.errorDetail || issue.ruleDescription} (${issue.ruleNames.join(', ')})`,
-        details: issue
-      })
+  const markdown = (await readFile(mdFilename)).toString()
+  const tokens = await md.parse(markdown)
+  const codeIssues = await checkCode(basePath, tokens)
+  codeIssues.forEach(({ line, message }) => {
+    errors.push({
+      line,
+      message
     })
-    return readFile(mdFilename)
   })
-  .then(buffer => buffer.toString())
-  .then(markdown => md.parse(markdown))
-  .then(async tokens => {
-    const issues = await checkCode(basePath, tokens)
-    if (issues.length) {
-      issues.forEach(({ line, message }) => {
-        errors.push({
-          line,
-          message
+
+  if (errors.length) {
+    errors = errors.sort((err1, err2) => err1.line - err2.line)
+  }
+
+  const instructions = []
+  renderer(tokens, instruction => instructions.push(instruction), { basePath })
+  const script = instructions.join('\n')
+
+  const configuration = await check({
+    port: 53475,
+    mappings: [{
+      match: '\\/script(?:\\?.*)?$',
+      custom: (request, response) => {
+        const length = (new TextEncoder().encode(script)).length
+        response.writeHead(200, {
+          'content-type': 'text/plain; charset=utf-8',
+          'content-length': length
         })
-      })
-    }
-    if (errors.length) {
+        response.end(script)
+      }
+    }]
+  })
+  return { errors, script, configuration }
+}
+
+module.exports = main
+
+/* istanbul ignore if */ // Only used for command line
+if (require.main === module) {
+  const { argv } = process
+  const verbose = argv.includes('-verbose')
+  const lintOnly = argv.includes('-lintOnly')
+  const serveAnyway = argv.includes('-serve')
+  const [,, mdFilename] = argv
+  main(mdFilename)
+    .then(({ errors, script, configuration }) => {
       errors
-        .sort((err1, err2) => err1.line - err2.line)
         .forEach(({ line, message, details }) => {
-          error(mdFilename, line, message)
+          console.error(`${mdFilename}@${line}: ${message}`)
           if (verbose && details) {
             console.error(details)
           }
         })
-      if (!serveAnyway) {
+      if (lintOnly || (errors.length && !serveAnyway)) {
         process.exit(errors.length)
       }
-    }
-    return tokens
-  })
-  .then(tokens => {
-    if (lintOnly) {
-      process.exit(0)
-    }
-    const instructions = []
-    renderer(tokens, instruction => instructions.push(instruction), { basePath })
-    const script = instructions.join('\n')
-    if (verbose) {
-      console.log(script)
-    }
-    return check({
-      port: 53475,
-      mappings: [{
-        match: '\\/script(?:\\?.*)?$',
-        custom: (request, response) => {
-          const length = (new TextEncoder().encode(script)).length
-          response.writeHead(200, {
-            'content-type': 'text/plain; charset=utf-8',
-            'content-length': length
-          })
-          response.end(script)
-        }
-      }]
+      log(serve(configuration))
     })
-  })
-  .then(configuration => {
-    log(serve(configuration))
-  })
-  .catch(reason => console.error(reason))
+    .catch(reason => console.error(reason))
+}

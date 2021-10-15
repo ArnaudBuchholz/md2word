@@ -1,0 +1,8 @@
+type hello
+left 3
+select 2
+format bold
+left 1
+right 1
+select 2
+format italic

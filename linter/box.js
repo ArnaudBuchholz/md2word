@@ -23,7 +23,13 @@ module.exports = {
           state = POSSIBLE_TITLE
           possibleTitle = null
         } else {
-          if (possibleTitle && !checkFormatOfTitle(possibleTitle)) {
+          if (!possibleTitle) {
+            onError({
+              lineNumber: possibleBox.lineNumber,
+              detail: 'Missing box title',
+              context: possibleBox.line
+            })
+          } else if (!checkFormatOfTitle(possibleTitle)) {
             onError({
               lineNumber: possibleBox.lineNumber,
               detail: 'Box title must be a one liner',
@@ -36,12 +42,6 @@ module.exports = {
       if (token.type === 'inline') {
         if (state === POSSIBLE_TITLE) {
           possibleTitle = token
-        } else if (state === END_OF_BOX) {
-          onError({
-            lineNumber: token.lineNumber,
-            detail: 'Box title after box content',
-            context: possibleBox.line
-          })
         }
       }
       if (token.type === 'blockquote_close') {

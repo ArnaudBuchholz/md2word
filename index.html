@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.0.6/markdown-it.min.js"></script>
     <script>const md = markdownit()</script>
-    <title>Word Simulator</title>
+    <title>md2word</title>
     <style>
 .cursor {
   animation: blinker 1s linear infinite;
@@ -13,6 +13,14 @@
   50% {
     opacity: 0;
   }
+}
+
+body {
+  font-family:Calibri;
+}
+
+.title {
+  padding-bottom: 2rem;
 }
 
 .selected {
@@ -119,6 +127,10 @@ const require = function (nameOrPath) {
   <html>
     <div class="container">
       <div class="code">
+        <div class="title">
+          <h1>md2word</h1>
+          <a href="https://npmjs.com/package/md2word"><img src="https://badge.fury.io/js/md2word.svg"></a>
+        </div>
         <textarea id="markdown" cols="40" rows="20"></textarea><br />
         <button id="render">&#9196; render &#9196;</button>&nbsp;<button id="renderRun">&#9196; render &amp; run &#9193;</button><br />
         <textarea id="rendered" cols="40" rows="20"></textarea><br />
@@ -134,7 +146,7 @@ const require = function (nameOrPath) {
 async function onRender () {
   const instructions = []
   const markdown = document.getElementById('markdown').value
-  location.hash = encodeURI(markdown)
+  location.hash = encodeURIComponent(markdown)
   const tokens = await md.parse(markdown)
   console.log(tokens)
   renderer(tokens, instruction => {
@@ -158,7 +170,7 @@ document.querySelector('#run').addEventListener('click', onRun)
 
 const param = location.hash
 if (param.length > 1) {
-  document.getElementById('markdown').value = decodeURI(param.toString().substring(1))
+  document.getElementById('markdown').value = decodeURIComponent(param.toString().substring(1))
 }
     </script>
   </html>

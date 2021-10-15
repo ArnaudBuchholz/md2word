@@ -33,44 +33,52 @@ describe('linter', () => {
 
   const expected = {
     boxes: {
-      30: 'detects formatted titles',
-      35: 'detects multiline titles'
+      24: 'invalid double blockquote',
+      30: 'formatted titles',
+      35: 'multiline titles',
+      50: 'title after content',
+      54: 'invalid double blockquote'
     },
     'formatted header': {
-      1: 'detects formatted header'
+      1: 'formatted header'
     },
     'header levels': {
-      9: 'detects header with level > 4'
+      9: 'header with level > 4'
     },
     'missing caption in code': {
-      5: 'detects missing caption for code example',
-      25: 'detects formatted caption'
+      5: 'missing caption for code example',
+      25: 'formatted caption'
     },
     bullets: {
-      10: 'detects unique first level bullet',
-      15: 'detects unique second level bullet',
-      20: 'detects unique first level numbered bullet',
-      25: 'detects unique second level numbered bullet'
+      10: 'unique first level bullet',
+      15: 'unique second level bullet',
+      20: 'unique first level numbered bullet',
+      25: 'unique second level numbered bullet'
     },
     url: {
-      9: 'detects bare URL (markdownlint)',
-      13: 'detects URL title formatting'
+      9: 'bare URL (markdownlint)',
+      13: 'URL title formatting'
     },
     xref: {
-      5: 'detects invalid xref (no PREVIOUS)',
-      27: 'detects invalid xref id',
-      28: 'detects invalid xref id',
-      29: 'detects invalid xref id',
-      30: 'detects invalid xref id',
-      34: 'detects unknown xref id',
-      36: 'detects xref in a box title',
-      39: 'detects xref in a header',
-      43: 'detects invalid xref (no NEXT)',
-      45: 'detects invalid xref (no NEXT)'
+      5: 'invalid xref (no PREVIOUS)',
+      27: 'invalid xref id',
+      28: 'invalid xref id',
+      29: 'invalid xref id',
+      30: 'invalid xref id',
+      34: 'unknown xref id',
+      36: 'xref in a box title',
+      39: 'xref in a header',
+      43: 'standalone caption',
+      45: 'invalid xref (no NEXT)',
+      47: 'invalid xref (no NEXT)',
+      49: 'invalid token'
     },
     caption: {
-      15: 'detects image without caption',
-      19: 'detects code without caption'
+      15: 'image without caption',
+      21: 'image with empty caption',
+      25: 'code without caption',
+      39: 'standalone caption',
+      47: 'box is not a caption'
     }
   }
 
@@ -102,6 +110,9 @@ describe('linter', () => {
 
   it('Checking the total error count', () => {
     const errorsFound = Object.keys(found).reduce((total, name) => total + Object.keys(found[name]).length, 0)
+    if (errorsFound !== expectedErrorCount) {
+      console.log(found)
+    }
     assert.strictEqual(errorsFound, expectedErrorCount)
   })
 })
