@@ -1,4 +1,9 @@
 # md2word
+[![Node.js CI](https://github.com/ArnaudBuchholz/md2word/actions/workflows/node.js.yml/badge.svg)](https://github.com/ArnaudBuchholz/md2word/actions/workflows/node.js.yml)
+[![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![md2word](https://badge.fury.io/js/md2word.svg)](https://www.npmjs.org/package/md2word)
+[![install size](https://packagephobia.now.sh/badge?p=md2word)](https://packagephobia.now.sh/result?p=md2word)
+
 <!-- markdownlint-disable line-length -->
 
 Markdown to word automation
