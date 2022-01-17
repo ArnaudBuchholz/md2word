@@ -5,10 +5,9 @@
 const { dirname, isAbsolute, join } = require('path')
 const { markdownlint } = require('markdownlint').promises
 const md = require('markdown-it')()
-const { readdir, readFile } = require('fs').promises
+const { readFile } = require('fs').promises
 const renderer = require('./renderer')
 const { check, log, serve } = require('reserve')
-const customRulesPath = join(__dirname, './linter')
 const checkCode = require('./checkcode')
 
 async function main (mdFilename) {
@@ -28,8 +27,7 @@ async function main (mdFilename) {
   }
 
   let errors = []
-  const ruleNames = await readdir(customRulesPath)
-  const customRules = ruleNames.map(name => require(join(customRulesPath, name)))
+  const customRules = await require('./linter')
   const report = await markdownlint({
     files: [mdFilename],
     customRules,
