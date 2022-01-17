@@ -40,7 +40,7 @@ Pointing to a non existing xref should be an error : {{xref:NOT_EXISTING}}
 
 ### Final edge cases
 
-> {{xref:INVALID}} Not even a caption
+> {{xref:INVALID}} Not even a caption
 
 This {{xref:NEXT}} does not exist
 
