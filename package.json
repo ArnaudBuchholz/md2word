@@ -1,6 +1,6 @@
 {
   "name": "md2word",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Markdown to Word automation",
   "main": "./index.js",
   "files": [
@@ -34,12 +34,12 @@
   },
   "homepage": "https://github.com/ArnaudBuchholz/md2word#readme",
   "dependencies": {
-    "markdown-it": "^12.2.0",
-    "markdownlint": "^0.24.0",
-    "reserve": "^1.11.7"
+    "markdown-it": "^12.3.2",
+    "markdownlint": "^0.25.1",
+    "reserve": "^1.12.1"
   },
   "devDependencies": {
-    "mocha": "^9.1.2",
+    "mocha": "^9.1.4",
     "nyc": "^15.1.0",
     "standard": "^16.0.4"
   },
