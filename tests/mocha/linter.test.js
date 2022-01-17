@@ -6,27 +6,26 @@ const { basename, join } = require('path')
 const { readdir } = require('fs').promises
 
 const samples = join(__dirname, '../linter')
-const rules = join(__dirname, '../../linter')
 
 describe('linter', () => {
   let found
 
   before(() => Promise.all([
     readdir(samples),
-    readdir(rules)
+    require('../../linter')
   ])
-    .then(([sampleFiles, ruleFiles]) => markdownlint({
+    .then(([sampleFiles, customRules]) => markdownlint({
       files: sampleFiles.map(name => join(samples, name)),
-      customRules: ruleFiles.map(name => require(join(rules, name)))
+      customRules
     }))
     .then(results => {
-      found = Object.keys(results).reduce((dictionay, name) => {
+      found = Object.keys(results).reduce((dictionary, name) => {
         const array = results[name]
-        dictionay[basename(name, '.md')] = array.reduce((errors, error) => {
+        dictionary[basename(name, '.md')] = array.reduce((errors, error) => {
           errors[error.lineNumber] = error
           return errors
         }, {})
-        return dictionay
+        return dictionary
       }, {})
     })
   )
