@@ -1,9 +1,11 @@
 'use strict'
 
+const { TokensExtensions } = require('./tools.js')
+
 const check = (tokens, index, type) => {
   const token = tokens[index]
   if (token.type !== type) {
-    throw new Error('Unepected token')
+    throw new Error('Unexpected token')
   }
   return token
 }
@@ -23,6 +25,7 @@ module.exports = {
   description: 'Caption validation',
   tags: ['md2word'],
   function: (params, onError) => {
+    const extensions = new TokensExtensions()
     params.tokens.forEach((token, index, tokens) => {
       let captionOffset = 0
       if (token.type === 'fence' && token.tag === 'code') {
@@ -30,7 +33,7 @@ module.exports = {
       } else if (token.type === 'inline' && token.children.length === 1 && token.children[0].type === 'image') {
         captionOffset = 2
       }
-      if (token.type === 'blockquote_open' && token.level === 0 && !token._isCaption) {
+      if (token.type === 'blockquote_open' && token.level === 0 && !extensions.get(token, 'isCaption')) {
         try {
           isValidCaption(tokens, index)
           onError({
@@ -53,7 +56,7 @@ module.exports = {
           })
           return
         }
-        next._isCaption = true
+        extensions.set(next, 'isCaption', true)
         try {
           isValidCaption(tokens, index + captionOffset)
         } catch (e) {
